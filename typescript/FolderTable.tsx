@@ -1,6 +1,8 @@
 import React, { useState } from 'react'
+import 'virtual-table-react/dist/index.css'
 // @ts-ignore
 import styles from './styles.module.css'
+
 
 import { Column, VirtualTable, VirtualTableItems, VirtualTableItem } from 'virtual-table-react'
 
@@ -45,11 +47,11 @@ export const FolderTable = ({theme}: FolderTableProps) => {
     const onFocused = (val: boolean) => setFocused(val)
 
     return (
-        <div className='rootVirtualTable'>
+        <div className={styles.rootVirtualTable}>
             <h1>Virtual Table</h1>
             <button onClick={onChange}>Fill</button>
             <button onClick={onSetFocus}>Set Focus</button>
-            <div className='containerVirtualTable'>
+            <div className={styles.containerVirtualTable}>
                 <VirtualTable 
                     columns={cols} 
                     onColumnsChanged={onColsChanged} 

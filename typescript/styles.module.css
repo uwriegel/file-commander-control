@@ -1,9 +1,18 @@
 /* add css module styles here (optional) */
 
-.test {
-  margin: 2em;
-  padding: 0.5em;
-  border: 2px solid #000;
-  font-size: 2em;
-  text-align: center;
+
+
+
+
+
+.rootVirtualTable {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  background-color: #444;
+}
+.containerVirtualTable {
+  flex-grow: 1;
+  padding: 20px;
+  display: flex;
 }
