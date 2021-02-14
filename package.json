@@ -12,8 +12,8 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "microbundle-crl --no-compress --format modern,cjs",
-    "start": "microbundle-crl watch --no-compress --format modern,cjs",
+    "build": "copyfiles -f  typescript/styles.module.css src && tsc && microbundle-crl --no-compress --format modern,cjs",
+    "start": "copyfiles -f  typescript/styles.module.css src && tsc && microbundle-crl watch --no-compress --format modern,cjs",
     "prepare": "run-s build",
     "predeploy": "cd example && npm install && npm run build"
   },
@@ -21,6 +21,8 @@
     "react": "^17.0.0"
   },
   "devDependencies": {
+    "@types/react": "^17.0.2",
+    "copyfiles": "^2.4.1",
     "cross-env": "^7.0.3",
     "microbundle-crl": "^0.13.11",
     "npm-run-all": "^4.1.5",
