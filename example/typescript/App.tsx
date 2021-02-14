@@ -42,7 +42,7 @@ const App = () => {
 				</select>
 			</div>
 			{appChoice == 0 
-				? <FolderTable /> 
+				? <FolderTable theme={theme} /> 
 				: null}
 		</div>  
 	)
