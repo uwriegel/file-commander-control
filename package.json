@@ -12,10 +12,8 @@
     "node": ">=10"
   },
   "scripts": {
-    "build": "copyfiles -f  typescript/styles.module.css src && tsc && microbundle-crl --no-compress --format modern,cjs",
     "start": "copyfiles -f  typescript/styles.module.css src && tsc && microbundle-crl watch --no-compress --format modern,cjs",
-    "prepare": "run-s build",
-    "predeploy": "cd example && npm install && npm run build"
+    "build": "copyfiles -f  typescript/styles.module.css src && tsc && microbundle-crl --no-compress --format modern,cjs && copyfiles -f  src/index.d.ts dist"
   },
   "peerDependencies": {
     "react": "^17.0.0"
