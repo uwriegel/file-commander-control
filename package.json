@@ -31,5 +31,8 @@
   },
   "files": [
     "dist"
-  ]
+  ],
+  "dependencies": {
+    "virtual-table-react": "^2.0.0"
+  }
 }
