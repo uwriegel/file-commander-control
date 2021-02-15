@@ -5,14 +5,7 @@
 
 
 
-.rootVirtualTable {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  background-color: #444;
-}
 .containerVirtualTable {
-  flex-grow: 1;
-  padding: 20px;
-  display: flex;
+ 	flex-grow: 1;
+  	display: flex;
 }
