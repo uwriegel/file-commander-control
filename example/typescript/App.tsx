@@ -1,6 +1,5 @@
 import React, { useLayoutEffect, useState} from 'react'
-
-import { FolderTable } from 'file-commander-control'
+import { FolderTest } from './FolderTest'
 import 'file-commander-control/dist/index.css'
 
 const App = () => {
@@ -42,7 +41,7 @@ const App = () => {
 				</select>
 			</div>
 			{appChoice == 0 
-				? <FolderTable theme={theme} /> 
+				? <FolderTest theme={theme} /> 
 				: null}
 		</div>  
 	)

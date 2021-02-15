@@ -24,7 +24,6 @@ export const FolderTable = ({theme}: FolderTableProps) => {
     ] as Column[])
     const [focused, setFocused] = useState(false)
     const [items, setItems ] = useState({count: 0, getItem: (i: number)=>{}} as VirtualTableItems)
-
     const onColsChanged = (cols: Column[])=> {}
     const onSort = ()=> {}
 
