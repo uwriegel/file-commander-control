@@ -4,6 +4,7 @@ import { VirtualTableItem, VirtualTableItems, Column } from 'virtual-table-react
 
 
 interface FolderItem extends VirtualTableItem {
+    index: number
     col1: string
     col2: string
     col3: string
@@ -27,10 +28,25 @@ export const FolderTest = ({theme}: FolderTestProps) => {
     const onColsChanged = (cols: Column[])=> {}
     const onSort = ()=> {}
 
-    const [items, setItems ] = useState({count: 0, getItem: (i: number)=>{}} as VirtualTableItems)
-    const onChange = () => setItems({count: 30, getItem, itemRenderer})
+    const [items, setItems ] = useState({items: [] as FolderItem[], itemRenderer: i=>[] } as VirtualTableItems)
+    const onChange = () => {
+        setItems({ 
+            items: Array.from(Array(6000).keys()).map(index => ({ col1: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem)),
+            itemRenderer
+        })
+    }
 
-    const getItem = (index: number) => ({ col1: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem)
+    const changeItem = (index: number, item: FolderItem) => {
+        const newItems = [...items.items]
+        newItems[index] = item
+        return { itemRenderer: items.itemRenderer, items: newItems }
+    }
+
+    const onSelection = (index: number, isSelected: boolean)=> {
+        var newItem = items.items[index] as FolderItem
+        newItem.isSelected = isSelected
+        setItems(changeItem(index, newItem)) 
+    }
 
     const itemRenderer = (item: VirtualTableItem) => {
         const tableItem = item as FolderItem
@@ -45,9 +61,17 @@ export const FolderTest = ({theme}: FolderTestProps) => {
         <div className={"folderTest"}>
             <button onClick={onChange}>Fill</button>
             <button onClick={onSetFocus}>Set Focus</button>
-            <FolderTable theme={theme} focused={focused} setFocused={setFocused} 
-                columns={columns} onColumnsChanged={onColsChanged} onSort={onSort}
-                items={items} /> 
+            <FolderTable 
+                theme={theme} 
+                focused={focused} 
+                setFocused={setFocused} 
+                columns={columns} 
+                onColumnsChanged={onColsChanged} 
+                onSort={onSort}
+                items={items}
+                onSelection={onSelection} /> 
         </div>
 	)
 }
+// TODO itemsChanged not resetting Position and CurrentItem, but adjusting them (Math.min)
+// TODO itemsChanged: new items: first set new items count 0 then new items 
