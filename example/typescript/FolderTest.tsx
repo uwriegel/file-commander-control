@@ -1,7 +1,6 @@
 import React, { useState } from 'react'
-import { FolderTable  } from 'file-commander-control'
+import { FolderTable, setFolderItems, changeFolderItem } from 'file-commander-control'
 import { VirtualTableItem, VirtualTableItems, Column } from 'virtual-table-react'
-
 
 interface FolderItem extends VirtualTableItem {
     index: number
@@ -28,24 +27,21 @@ export const FolderTest = ({theme}: FolderTestProps) => {
     const onColsChanged = (cols: Column[])=> {}
     const onSort = ()=> {}
 
-    const [items, setItems ] = useState({items: [] as FolderItem[], itemRenderer: i=>[] } as VirtualTableItems)
+    const [items, setItems ] = useState(setFolderItems({
+        items: [] as FolderItem[], itemRenderer: i=>[] 
+    }) as VirtualTableItems)
+
     const onChange = () => {
-        setItems({ 
+        setItems(setFolderItems({ 
             items: Array.from(Array(6000).keys()).map(index => ({ col1: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem)),
             itemRenderer
-        })
-    }
-
-    const changeItem = (index: number, item: FolderItem) => {
-        const newItems = [...items.items]
-        newItems[index] = item
-        return { itemRenderer: items.itemRenderer, items: newItems }
+        }))
     }
 
     const onSelection = (index: number, isSelected: boolean)=> {
         var newItem = items.items[index] as FolderItem
         newItem.isSelected = isSelected
-        setItems(changeItem(index, newItem)) 
+        setItems(changeFolderItem(items, index, newItem))
     }
 
     const itemRenderer = (item: VirtualTableItem) => {
@@ -69,9 +65,9 @@ export const FolderTest = ({theme}: FolderTestProps) => {
                 onColumnsChanged={onColsChanged} 
                 onSort={onSort}
                 items={items}
+                onItemsChanged={setItems}
                 onSelection={onSelection} /> 
         </div>
 	)
 }
-// TODO itemsChanged not resetting Position and CurrentItem, but adjusting them (Math.min)
-// TODO itemsChanged: new items: first set new items count 0 then new items 
+

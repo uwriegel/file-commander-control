@@ -1,11 +1,19 @@
-import React, { useEffect, useState } from 'react'
+import React from 'react'
 import 'virtual-table-react/dist/index.css'
-import { Column, VirtualTable, VirtualTableItems } from 'virtual-table-react'
+import { Column, VirtualTable, VirtualTableItems, setVirtualTableItems, VirtualTableItem } from 'virtual-table-react'
 
 // @ts-ignore
 import styles from './styles.module.css'
 
-type FolderTableProps = {
+export const setFolderItems = setVirtualTableItems
+
+export const changeFolderItem = (items: VirtualTableItems, index: number, item: VirtualTableItem) => {
+    const newItems = [...items.items]
+    newItems[index] = item
+    return { itemRenderer: items.itemRenderer, items: newItems, currentIndex: items.currentIndex }
+}
+
+export type FolderTableProps = {
     theme?: string
     focused: boolean
     setFocused: (val: boolean)=>void
@@ -14,20 +22,27 @@ type FolderTableProps = {
     onSort: (index: number, descending: boolean, isSubItem?: boolean)=>void
     onSelection: (index: number, isSelected: boolean)=>void
     items: VirtualTableItems
+    onItemsChanged: (items: VirtualTableItems)=>void
 }
 
-export const FolderTable = ({theme, focused, setFocused, columns, onColumnsChanged, onSort, items, onSelection}: FolderTableProps) => {
+export const FolderTable = ({
+    theme, 
+    focused, 
+    setFocused, 
+    columns, 
+    onColumnsChanged, 
+    onSort, 
+    items, 
+    onItemsChanged, 
+    onSelection}: FolderTableProps) => {
 
     const onKeyDown = (sevt: React.KeyboardEvent) => {
         const evt = sevt.nativeEvent
         if (evt.which == 45) {
-            onSelection(currentIndex, true)
-            setCurrentIndex(currentIndex + 1)
+            onSelection(items.currentIndex ?? 0, true)
+            //setCurrentIndex(currentIndex + 1)
         }
     }
-
-    const [currentIndex, setCurrentIndex] = useState(0)
-
     return (
         <div 
             onKeyDown={onKeyDown}
@@ -36,12 +51,11 @@ export const FolderTable = ({theme, focused, setFocused, columns, onColumnsChang
                 columns={columns} 
                 onColumnsChanged={onColumnsChanged} 
                 onSort={onSort} 
-                items={items} 
+                items={items}
+                onItemsChanged ={onItemsChanged} 
                 theme={theme}
                 focused={focused}
-                onFocused={setFocused}
-                currentIndex={currentIndex}
-                onCurrentIndexChanged={setCurrentIndex} />
+                onFocused={setFocused} />
         </div>
     )
 }
