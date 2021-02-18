@@ -20,7 +20,6 @@ export type FolderTableProps = {
     columns: Column[]
     onColumnsChanged: (cols: Column[])=>void
     onSort: (index: number, descending: boolean, isSubItem?: boolean)=>void
-    onSelection: (index: number, isSelected: boolean)=>void
     items: VirtualTableItems
     onItemsChanged: (items: VirtualTableItems)=>void
 }
@@ -33,14 +32,14 @@ export const FolderTable = ({
     onColumnsChanged, 
     onSort, 
     items, 
-    onItemsChanged, 
-    onSelection}: FolderTableProps) => {
+    onItemsChanged }: FolderTableProps) => {
 
     const onKeyDown = (sevt: React.KeyboardEvent) => {
         const evt = sevt.nativeEvent
         if (evt.which == 45) {
-            onSelection(items.currentIndex ?? 0, true)
-            //setCurrentIndex(currentIndex + 1)
+            items.items[items.currentIndex ?? 0].isSelected = !items.items[items.currentIndex ?? 0].isSelected
+            items.currentIndex = (items.currentIndex ?? 0) + 1
+            onItemsChanged(setVirtualTableItems(items))
         }
     }
     return (
@@ -52,7 +51,7 @@ export const FolderTable = ({
                 onColumnsChanged={onColumnsChanged} 
                 onSort={onSort} 
                 items={items}
-                onItemsChanged ={onItemsChanged} 
+                onItemsChanged={onItemsChanged} 
                 theme={theme}
                 focused={focused}
                 onFocused={setFocused} />

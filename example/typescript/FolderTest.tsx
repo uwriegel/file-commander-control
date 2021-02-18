@@ -38,12 +38,6 @@ export const FolderTest = ({theme}: FolderTestProps) => {
         }))
     }
 
-    const onSelection = (index: number, isSelected: boolean)=> {
-        var newItem = items.items[index] as FolderItem
-        newItem.isSelected = isSelected
-        setItems(changeFolderItem(items, index, newItem))
-    }
-
     const itemRenderer = (item: VirtualTableItem) => {
         const tableItem = item as FolderItem
         return [
@@ -65,8 +59,7 @@ export const FolderTest = ({theme}: FolderTestProps) => {
                 onColumnsChanged={onColsChanged} 
                 onSort={onSort}
                 items={items}
-                onItemsChanged={setItems}
-                onSelection={onSelection} /> 
+                onItemsChanged={setItems} /> 
         </div>
 	)
 }
