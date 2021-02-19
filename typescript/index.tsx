@@ -1,1 +1,1 @@
-export { FolderTable, FolderTableProps, setFolderItems, changeFolderItem } from './FolderTable'
+export { FolderTable, FolderTableProps, setFolderItems, folderItemsChanged } from './FolderTable'

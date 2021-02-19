@@ -19,7 +19,7 @@
     "react": "^17.0.0"
   },
   "dependencies": {
-    "virtual-table-react": "^4.0.0"
+    "virtual-table-react": "^5.0.0"
   },
   "devDependencies": {
     "@types/react": "^17.0.2",

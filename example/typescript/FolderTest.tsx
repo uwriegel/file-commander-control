@@ -1,6 +1,6 @@
-import React, { useState } from 'react'
-import { FolderTable, setFolderItems, changeFolderItem } from 'file-commander-control'
-import { VirtualTableItem, VirtualTableItems, Column } from 'virtual-table-react'
+import React, { useState, useRef } from 'react'
+import { FolderTable, setFolderItems, folderItemsChanged } from 'file-commander-control'
+import { VirtualTableItem, VirtualTableItems, Column, VirtualTable } from 'virtual-table-react'
 
 interface FolderItem extends VirtualTableItem {
     index: number
@@ -28,12 +28,17 @@ export const FolderTest = ({theme}: FolderTestProps) => {
     const onSort = ()=> {}
 
     const [items, setItems ] = useState(setFolderItems({
-        items: [] as FolderItem[], itemRenderer: i=>[] 
+        count: 0, getItem: i => ({ index: 0 }) , itemRenderer: i=>[] 
     }) as VirtualTableItems)
 
+    const folderItems = useRef([] as FolderItem[])
+    const getFolderItem = (index: number) => folderItems.current[index]
+
     const onChange = () => {
+        folderItems.current = Array.from(Array(6000).keys()).map(index => ({ col1: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
         setItems(setFolderItems({ 
-            items: Array.from(Array(6000).keys()).map(index => ({ col1: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem)),
+            count: folderItems.current.length,
+            getItem: getFolderItem,
             itemRenderer
         }))
     }

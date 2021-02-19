@@ -7,11 +7,12 @@ import styles from './styles.module.css'
 
 export const setFolderItems = setVirtualTableItems
 
-export const changeFolderItem = (items: VirtualTableItems, index: number, item: VirtualTableItem) => {
-    const newItems = [...items.items]
-    newItems[index] = item
-    return { itemRenderer: items.itemRenderer, items: newItems, currentIndex: items.currentIndex }
-}
+export const folderItemsChanged = (items: VirtualTableItems) => ({ 
+    count: items.count,
+    getItem: items.getItem,
+    itemRenderer: items.itemRenderer, 
+    currentIndex: items.currentIndex 
+})
 
 export type FolderTableProps = {
     theme?: string
@@ -34,40 +35,42 @@ export const FolderTable = ({
     items, 
     onItemsChanged }: FolderTableProps) => {
 
+    const performEachItem = (perform: (item: VirtualTableItem, index: number)=>void) => {
+        [...Array(items.count).keys()].forEach(n => {
+            const item = items.getItem(n)
+            perform(item, n)
+        })
+    }
+
     const onKeyDown = (sevt: React.KeyboardEvent) => {
         const evt = sevt.nativeEvent
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
-            items.items = items.items.map((n, i) => { 
-                n.isSelected = i >= (items.currentIndex ?? 0) 
-                return n
-            }) 
-            onItemsChanged(setVirtualTableItems(items))
+            performEachItem((item, i) => item.isSelected = i >= (items.currentIndex ?? 0)) 
+            onItemsChanged(folderItemsChanged(items))
         }
         if (evt.which == 36 && evt.shiftKey) { // Shift + home
-            items.items = items.items.map((n, i) => { 
-                n.isSelected = i <= (items.currentIndex ?? 0) 
-                return n
-            }) 
-            onItemsChanged(setVirtualTableItems(items))
+            performEachItem((item, i) => item.isSelected = i <= (items.currentIndex ?? 0)) 
+            onItemsChanged(folderItemsChanged(items))
         }
         if (evt.which == 45) { // Ins
-            items.items[items.currentIndex ?? 0].isSelected = !items.items[items.currentIndex ?? 0].isSelected
-            items.currentIndex = (items.currentIndex ?? 0) + 1
-            onItemsChanged(setVirtualTableItems(items))
+            const item = items.getItem(items.currentIndex ?? 0)
+            item.isSelected = !item.isSelected
+            items.currentIndex =   
+            
+            
+            // TODO: in VirtualTable
+            Math.min((items.currentIndex ?? 0) + 1, items.count - 1)
+
+
+            onItemsChanged(folderItemsChanged(items))
         }
         if (evt.which == 107) { // Numlock +
-            items.items = items.items.map(n => { 
-                n.isSelected = true 
-                return n
-            }) 
-            onItemsChanged(setVirtualTableItems(items))
+            performEachItem(item => item.isSelected = true)
+            onItemsChanged(folderItemsChanged(items))
         }
         if (evt.which == 109) { // Numlock -
-            items.items = items.items.map(n => { 
-                n.isSelected = false 
-                return n
-            }) 
-            onItemsChanged(setVirtualTableItems(items))
+            performEachItem(item => item.isSelected = false)
+            onItemsChanged(folderItemsChanged(items))
         }
     }
     return (
@@ -88,6 +91,7 @@ export const FolderTable = ({
 }
 
 // TODO textbox containing path, enter
+// TODO path combine to set
 // TODO Restriction
 // TODO Grid splitter type script
 // TODO two folder items
