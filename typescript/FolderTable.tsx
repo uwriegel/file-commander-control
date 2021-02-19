@@ -7,7 +7,7 @@ import styles from './styles.module.css'
 
 export const setFolderItems = setVirtualTableItems
 
-export const folderItemsChanged = (items: VirtualTableItems) => ({ 
+export const folderItemsChanged = (items: VirtualTableItems) => setFolderItems({ 
     count: items.count,
     getItem: items.getItem,
     itemRenderer: items.itemRenderer, 
@@ -55,13 +55,7 @@ export const FolderTable = ({
         if (evt.which == 45) { // Ins
             const item = items.getItem(items.currentIndex ?? 0)
             item.isSelected = !item.isSelected
-            items.currentIndex =   
-            
-            
-            // TODO: in VirtualTable
-            Math.min((items.currentIndex ?? 0) + 1, items.count - 1)
-
-
+            items.currentIndex = (items.currentIndex ?? 0) + 1
             onItemsChanged(folderItemsChanged(items))
         }
         if (evt.which == 107) { // Numlock +
