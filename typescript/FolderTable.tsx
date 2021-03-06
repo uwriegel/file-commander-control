@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useRef } from 'react'
 import 'virtual-table-react/dist/index.css'
 import { Column, Table, TableItems, setTableItems, TableItem } from 'virtual-table-react'
 
@@ -35,8 +35,17 @@ export const FolderTable = ({
     itemRenderer,
     onItemsChanged }: FolderTableProps) => {
 
+    const pathInput = useRef<HTMLInputElement>(null)        
+
     const onKeyDown = (sevt: React.KeyboardEvent) => {
+        console.log("Hier bin ich im Kontroll")
+
         const evt = sevt.nativeEvent
+        if (evt.which == 9 && evt.shiftKey) { // Shift + tab
+            pathInput.current?.focus()
+            sevt.stopPropagation()
+            sevt.preventDefault()
+        }
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
             items.items.forEach((item, i) => item.isSelected = i >= (items.currentIndex ?? 0)) 
             onItemsChanged(folderItemsChanged(items))
@@ -60,12 +69,28 @@ export const FolderTable = ({
             onItemsChanged(folderItemsChanged(items))
         }
     }
+
+    const onPathInput = (sevt: React.KeyboardEvent) => {
+        const evt = sevt.nativeEvent
+        if (evt.which == 9) { // Shift + tab
+            setFocused(true)
+            console.log("habs gemacht")
+            sevt.stopPropagation()
+            sevt.preventDefault()
+        }
+    }
     
+    const onInputFocus = () => {
+        pathInput.current?.select()
+    }
+
     return (
         <div 
             onKeyDown={onKeyDown}
             className={styles.containerVirtualTable}>
-            <input className={styles.pathInput}></input>
+            <input ref={pathInput} className={styles.pathInput} 
+                onKeyDown={onPathInput}
+                onFocus={onInputFocus}></input>
             <Table 
                 columns={columns} 
                 onColumnsChanged={onColumnsChanged} 
@@ -80,9 +105,8 @@ export const FolderTable = ({
     )
 }
 
-// TODO textbox input tab, shift tab from folder
 // TODO textbox state 'path' is in parent,
-// TODO textbox enter -> pathChanged, select-all
+// TODO textbox enter -> pathChanged, 
 
 // TODO Restriction
 
