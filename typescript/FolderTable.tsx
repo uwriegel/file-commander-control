@@ -80,8 +80,8 @@ export const FolderTable = ({
     )
 }
 
-// TODO textbox style colors
 // TODO style yaru dark
+// TODO textbox input tab, shift tab from folder
 // TODO textbox state 'path' is in parent,
 // TODO textbox enter -> pathChanged, select-all
 

@@ -7,8 +7,8 @@
 }
 
 .pathInput {
-    background-color: var(--main-background-color);
-    color: var(--main-color);  
+    background-color: var(--tablereact-main-background-color);
+    color: var(--tablereact-main-color);  
     margin-left: 3px;
     margin-right: 3px;
     border-style: none;
