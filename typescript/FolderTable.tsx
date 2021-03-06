@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
 import 'virtual-table-react/dist/index.css'
 import { Column, Table, TableItems, setTableItems, TableItem } from 'virtual-table-react'
 
@@ -22,6 +22,8 @@ export type FolderTableProps = {
     items: TableItems
     itemRenderer: (item: TableItem)=>JSX.Element[]
     onItemsChanged: (items: TableItems)=>void
+    path: string
+    onPathChanged: (path: string)=>void
 }
 
 export const FolderTable = ({
@@ -33,12 +35,18 @@ export const FolderTable = ({
     onSort, 
     items, 
     itemRenderer,
-    onItemsChanged }: FolderTableProps) => {
+    onItemsChanged,
+    path,
+    onPathChanged 
+}: FolderTableProps) => {
+
+    const [pathText, setPathText] = useState("")
+    const onInputChange = (sevt: ChangeEvent<HTMLInputElement>) => setPathText(sevt.currentTarget.value)
+    useEffect(() => setPathText(path), [path])
 
     const pathInput = useRef<HTMLInputElement>(null)        
 
     const onKeyDown = (sevt: React.KeyboardEvent) => {
-        console.log("Hier bin ich im Kontroll")
 
         const evt = sevt.nativeEvent
         if (evt.which == 9 && evt.shiftKey) { // Shift + tab
@@ -72,12 +80,13 @@ export const FolderTable = ({
 
     const onPathInput = (sevt: React.KeyboardEvent) => {
         const evt = sevt.nativeEvent
-        if (evt.which == 9) { // Shift + tab
+        if (evt.which == 9) { // tab
             setFocused(true)
-            console.log("habs gemacht")
             sevt.stopPropagation()
             sevt.preventDefault()
         }
+        if (evt.which == 13)  // enter
+            onPathChanged(pathInput.current?.value || "")
     }
     
     const onInputFocus = () => {
@@ -89,6 +98,8 @@ export const FolderTable = ({
             onKeyDown={onKeyDown}
             className={styles.containerVirtualTable}>
             <input ref={pathInput} className={styles.pathInput} 
+                value={pathText}
+                onChange={onInputChange}
                 onKeyDown={onPathInput}
                 onFocus={onInputFocus}></input>
             <Table 
@@ -104,9 +115,6 @@ export const FolderTable = ({
         </div>
     )
 }
-
-// TODO textbox state 'path' is in parent,
-// TODO textbox enter -> pathChanged, 
 
 // TODO Restriction
 

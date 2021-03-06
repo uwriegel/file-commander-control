@@ -13,10 +13,16 @@ type FolderTestProps = {
 }
 export const FolderTest = ({theme}: FolderTestProps) => {
     const [focused, setFocused] = useState(false)
+    const [path, setPath] = useState("")
 
     const onSetFocus = () => {
         setFocused(true)
     }   
+
+    const onPathChanged = (path: string) => {
+        alert(path)
+        onChange()
+    }
 
     const [columns, setColumns] = useState([
         { name: "Eine Spalte", isSortable: true }, 
@@ -30,6 +36,7 @@ export const FolderTest = ({theme}: FolderTestProps) => {
     const [items, setItems ] = useState(setFolderItems({ items: [] }) as TableItems)
 
     const onChange = () => {
+        setPath("/home/uwe/documents")
         const folderItems = Array.from(Array(6000).keys()).map(index => ({ col1: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
         setItems(setFolderItems({ items: folderItems}))
     }
@@ -56,7 +63,9 @@ export const FolderTest = ({theme}: FolderTestProps) => {
                 onSort={onSort}
                 items={items}
                 itemRenderer={itemRenderer}
-                onItemsChanged={setItems} /> 
+                onItemsChanged={setItems}
+                path={path}
+                onPathChanged={onPathChanged} /> 
         </div>
 	)
 }
