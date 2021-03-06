@@ -7,8 +7,19 @@ const App = () => {
     const [theme, setTheme] = useState("")
 
     const onAppChange = (evt: React.ChangeEvent<HTMLSelectElement>) => setAppChoice(evt.target.selectedIndex)
-    const onThemeChange = (evt: React.ChangeEvent<HTMLSelectElement>) => 
-        changeTheme(evt.target.selectedIndex == 1 ? "yaru" : "blue")
+    const onThemeChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
+        switch (evt.target.selectedIndex) {
+            case 0:
+                changeTheme("blue")
+                break
+            case 1:
+                changeTheme("yaru")
+                break
+            case 2:
+                changeTheme("yarudark")
+                break
+        }
+    }
 
     const changeTheme = (theme: string) => {
         const styleSheet = document.getElementById("theme")  
@@ -36,8 +47,9 @@ const App = () => {
 					<option>Folder</option>
 				</select>
 				<select onChange={onThemeChange}>
-					<option>blue</option>
-					<option>yaru</option>
+                    <option>Blue</option>
+                    <option>Yaru</option>
+                    <option>Yaru dark</option>
 				</select>
 			</div>
 			{appChoice == 0 
