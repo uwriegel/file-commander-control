@@ -65,6 +65,7 @@ export const FolderTable = ({
         <div 
             onKeyDown={onKeyDown}
             className={styles.containerVirtualTable}>
+            <input className={styles.pathInput}></input>
             <Table 
                 columns={columns} 
                 onColumnsChanged={onColumnsChanged} 
@@ -79,15 +80,21 @@ export const FolderTable = ({
     )
 }
 
-// TODO textbox containing path, enter
-// TODO path combine to set
+// TODO textbox style colors
+// TODO style yaru dark
+// TODO textbox state 'path' is in parent,
+// TODO textbox enter -> pathChanged, select-all
+
 // TODO Restriction
+
 // TODO Grid splitter type script
+
 // TODO two folder items
+
 // TODO F3 viewer
 
 // TODO in hyper rename fill directory items and drive items and icons
 
 
 // TODO parent item not selectable: isSelectable property per folder item
-// TODO Exif info in anoter style
+// TODO Exif info in another style
