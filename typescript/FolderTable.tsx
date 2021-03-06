@@ -1,16 +1,14 @@
 import React from 'react'
 import 'virtual-table-react/dist/index.css'
-import { Column, VirtualTable, VirtualTableItems, setVirtualTableItems, VirtualTableItem } from 'virtual-table-react'
+import { Column, Table, TableItems, setTableItems, TableItem } from 'virtual-table-react'
 
 // @ts-ignore
 import styles from './styles.module.css'
 
-export const setFolderItems = setVirtualTableItems
+export const setFolderItems = setTableItems
 
-export const folderItemsChanged = (items: VirtualTableItems) => setFolderItems({ 
-    count: items.count,
-    getItem: items.getItem,
-    itemRenderer: items.itemRenderer, 
+export const folderItemsChanged = (items: TableItems) => setFolderItems({ 
+    items: items.items,
     currentIndex: items.currentIndex 
 })
 
@@ -21,8 +19,9 @@ export type FolderTableProps = {
     columns: Column[]
     onColumnsChanged: (cols: Column[])=>void
     onSort: (index: number, descending: boolean, isSubItem?: boolean)=>void
-    items: VirtualTableItems
-    onItemsChanged: (items: VirtualTableItems)=>void
+    items: TableItems
+    itemRenderer: (item: TableItem)=>JSX.Element[]
+    onItemsChanged: (items: TableItems)=>void
 }
 
 export const FolderTable = ({
@@ -33,49 +32,45 @@ export const FolderTable = ({
     onColumnsChanged, 
     onSort, 
     items, 
+    itemRenderer,
     onItemsChanged }: FolderTableProps) => {
-
-    const performEachItem = (perform: (item: VirtualTableItem, index: number)=>void) => {
-        [...Array(items.count).keys()].forEach(n => {
-            const item = items.getItem(n)
-            perform(item, n)
-        })
-    }
 
     const onKeyDown = (sevt: React.KeyboardEvent) => {
         const evt = sevt.nativeEvent
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
-            performEachItem((item, i) => item.isSelected = i >= (items.currentIndex ?? 0)) 
+            items.items.forEach((item, i) => item.isSelected = i >= (items.currentIndex ?? 0)) 
             onItemsChanged(folderItemsChanged(items))
         }
         if (evt.which == 36 && evt.shiftKey) { // Shift + home
-            performEachItem((item, i) => item.isSelected = i <= (items.currentIndex ?? 0)) 
+            items.items.forEach((item, i) => item.isSelected = i <= (items.currentIndex ?? 0)) 
             onItemsChanged(folderItemsChanged(items))
         }
         if (evt.which == 45) { // Ins
-            const item = items.getItem(items.currentIndex ?? 0)
+            const item = items.items[items.currentIndex ?? 0]
             item.isSelected = !item.isSelected
             items.currentIndex = (items.currentIndex ?? 0) + 1
             onItemsChanged(folderItemsChanged(items))
         }
         if (evt.which == 107) { // Numlock +
-            performEachItem(item => item.isSelected = true)
+            items.items.forEach(item => item.isSelected = true)
             onItemsChanged(folderItemsChanged(items))
         }
         if (evt.which == 109) { // Numlock -
-            performEachItem(item => item.isSelected = false)
+            items.items.forEach(item => item.isSelected = false)
             onItemsChanged(folderItemsChanged(items))
         }
     }
+    
     return (
         <div 
             onKeyDown={onKeyDown}
             className={styles.containerVirtualTable}>
-            <VirtualTable 
+            <Table 
                 columns={columns} 
                 onColumnsChanged={onColumnsChanged} 
                 onSort={onSort} 
                 items={items}
+                itemRenderer={itemRenderer}
                 onItemsChanged={onItemsChanged} 
                 theme={theme}
                 focused={focused}

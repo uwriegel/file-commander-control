@@ -1,8 +1,8 @@
 import React, { useState, useRef } from 'react'
 import { FolderTable, setFolderItems, folderItemsChanged } from 'file-commander-control'
-import { VirtualTableItem, VirtualTableItems, Column, VirtualTable } from 'virtual-table-react'
+import { TableItem, TableItems, Column, Table } from 'virtual-table-react'
 
-interface FolderItem extends VirtualTableItem {
+interface FolderItem extends TableItem {
     index: number
     col1: string
     col2: string
@@ -27,23 +27,14 @@ export const FolderTest = ({theme}: FolderTestProps) => {
     const onColsChanged = (cols: Column[])=> {}
     const onSort = ()=> {}
 
-    const [items, setItems ] = useState(setFolderItems({
-        count: 0, getItem: i => ({ index: 0 }) , itemRenderer: i=>[] 
-    }) as VirtualTableItems)
-
-    const folderItems = useRef([] as FolderItem[])
-    const getFolderItem = (index: number) => folderItems.current[index]
+    const [items, setItems ] = useState(setFolderItems({ items: [] }) as TableItems)
 
     const onChange = () => {
-        folderItems.current = Array.from(Array(6000).keys()).map(index => ({ col1: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
-        setItems(setFolderItems({ 
-            count: folderItems.current.length,
-            getItem: getFolderItem,
-            itemRenderer
-        }))
+        const folderItems = Array.from(Array(6000).keys()).map(index => ({ col1: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
+        setItems(setFolderItems({ items: folderItems}))
     }
 
-    const itemRenderer = (item: VirtualTableItem) => {
+    const itemRenderer = (item: TableItem) => {
         const tableItem = item as FolderItem
         return [
             <td key={1}>{tableItem.col1}</td>,
@@ -64,6 +55,7 @@ export const FolderTest = ({theme}: FolderTestProps) => {
                 onColumnsChanged={onColsChanged} 
                 onSort={onSort}
                 items={items}
+                itemRenderer={itemRenderer}
                 onItemsChanged={setItems} /> 
         </div>
 	)
