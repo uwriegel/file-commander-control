@@ -69,6 +69,19 @@ export const FolderTable = ({
     const onKeyDown = (sevt: React.KeyboardEvent) => {
 
         const evt = sevt.nativeEvent
+        if (evt.which == 8) { // backspace
+            if (originalItems.current) {
+                console.log("backspace")
+                const newRestrictValue = restrictValue.substr(0, restrictValue.length - 1)
+                if (newRestrictValue.length == 0) 
+                    restrictClose()            
+                else
+                    restrictTo(newRestrictValue)
+                sevt.stopPropagation()
+                sevt.preventDefault()
+                return true
+            }
+        }  
         if (evt.which == 9 && evt.shiftKey) { // Shift + tab
             pathInput.current?.focus()
             sevt.stopPropagation()
@@ -103,7 +116,8 @@ export const FolderTable = ({
             return true
         }
         if (!evt.altKey && !evt.ctrlKey && evt.key.length > 0 && evt.key.length < 2) {
-            restrictTo(evt.key)
+            const newValue = restrictValue + evt.key
+            restrictTo(newValue)
             return true
         }
         if (evt.which == 27) { // esc
@@ -128,9 +142,9 @@ export const FolderTable = ({
         pathInput.current?.select()
     }
 
-    const restrictTo = (val: string) => {
-        const newValue = restrictValue + val
-        const filteredItems = displayItems.items.filter(n => n.name.toLocaleLowerCase().startsWith(newValue))
+    const restrictTo = (newValue: string) => {
+        const itemsToSearch = originalItems.current || displayItems
+        const filteredItems = itemsToSearch.items.filter(n => n.name.toLocaleLowerCase().startsWith(newValue))
         if (filteredItems.length) {
             setRestrictValue(newValue)
             if (restrictValue.length == 0)  
@@ -186,7 +200,6 @@ export const FolderTable = ({
 }
 
 // TODO Restriction: adapt indexes, adapt current index
-// TODO Restriction: backspace
 // TODO Enter on FolderTable -> callback onenter in Folder Test changeItems  A N D  changePath > restrictClose
 
 // TODO Grid splitter type script
