@@ -1,4 +1,4 @@
-import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import React, { ChangeEvent, useLayoutEffect, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import 'virtual-table-react/dist/index.css'
 import { Column, Table, TableItems, setTableItems, TableItem } from 'virtual-table-react'
@@ -55,7 +55,14 @@ export const FolderTable = ({
     const [pathText, setPathText] = useState("")
     const [restrictValue, setRestrictValue] = useState<string>("")
     const onInputChange = (sevt: ChangeEvent<HTMLInputElement>) => setPathText(sevt.currentTarget.value)
-    useEffect(() => setPathText(path), [path])
+    useLayoutEffect(() => {
+        restrictClose()
+        setPathText(path)
+    }, [path])
+
+    const [displayItems, setDisplayItems] = useState(setFolderItems({ items: [] }) as FolderTableItems)
+    useLayoutEffect(() => setDisplayItems(items), [items])
+    const originalItems = useRef<FolderTableItems>()
 
     const pathInput = useRef<HTMLInputElement>(null)        
 
@@ -69,29 +76,29 @@ export const FolderTable = ({
             return true
         }
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
-            items.items.forEach((item, i) => item.isSelected = i >= (items.currentIndex ?? 0)) 
+            displayItems.items.forEach((item, i) => item.isSelected = i >= (items.currentIndex ?? 0)) 
             onItemsChanged(folderItemsChanged(items))
             return true
         }
         if (evt.which == 36 && evt.shiftKey) { // Shift + home
-            items.items.forEach((item, i) => item.isSelected = i <= (items.currentIndex ?? 0)) 
+            displayItems.items.forEach((item, i) => item.isSelected = i <= (items.currentIndex ?? 0)) 
             onItemsChanged(folderItemsChanged(items))
             return true
         }
         if (evt.which == 45) { // Ins
-            const item = items.items[items.currentIndex ?? 0]
+            const item = displayItems.items[items.currentIndex ?? 0]
             item.isSelected = !item.isSelected
             items.currentIndex = (items.currentIndex ?? 0) + 1
             onItemsChanged(folderItemsChanged(items))
             return true
         }
         if (evt.which == 107) { // Numlock +
-            items.items.forEach(item => item.isSelected = true)
+            displayItems.items.forEach(item => item.isSelected = true)
             onItemsChanged(folderItemsChanged(items))
             return true
         }
         if (evt.which == 109) { // Numlock -
-            items.items.forEach(item => item.isSelected = false)
+            displayItems.items.forEach(item => item.isSelected = false)
             onItemsChanged(folderItemsChanged(items))
             return true
         }
@@ -123,15 +130,31 @@ export const FolderTable = ({
 
     const restrictTo = (val: string) => {
         const newValue = restrictValue + val
-        if (restrictValue.length == 0) {
-            const filteredItems = items.items.filter(n => n.name.toLocaleLowerCase().startsWith(newValue))
+        const filteredItems = displayItems.items.filter(n => n.name.toLocaleLowerCase().startsWith(newValue))
+        if (filteredItems.length) {
+            setRestrictValue(newValue)
+            if (restrictValue.length == 0)  
+                originalItems.current = items
+            setDisplayItems(setFolderItems({
+                items: filteredItems,
+                currentIndex: displayItems.currentIndex
+            }))
         }
-        setRestrictValue(newValue)
     }
 
-    const restrictClose = () => setRestrictValue("")
+    const restrictClose = () => {
+        setRestrictValue("")
+        if (originalItems.current) {
+            setDisplayItems(originalItems.current)
+            originalItems.current = undefined
+        }
+    }
 
-    const onFolderItemsChanged = (items: TableItems) => onItemsChanged(items as FolderTableItems)
+    const onFolderItemsChanged = (items: TableItems) => {
+        const folderItems = items as FolderTableItems
+        setDisplayItems(folderItems)
+        onItemsChanged(folderItems)
+    }
 
     return (
         <div className={styles.containerVirtualTable}>
@@ -145,7 +168,7 @@ export const FolderTable = ({
                 columns={columns} 
                 onColumnsChanged={onColumnsChanged} 
                 onSort={onSort} 
-                items={items}
+                items={displayItems}
                 itemRenderer={itemRenderer}
                 onItemsChanged={onFolderItemsChanged} 
                 theme={theme}
@@ -162,7 +185,9 @@ export const FolderTable = ({
     )
 }
 
-// TODO Restriction: separete folderItems ans folderTableItems
+// TODO Restriction: adapt indexes, adapt current index
+// TODO Restriction: backspace
+// TODO Enter on FolderTable -> callback onenter in Folder Test changeItems  A N D  changePath > restrictClose
 
 // TODO Grid splitter type script
 

@@ -18,9 +18,9 @@
     font-family: sans-serif;
 }
 .restrictor {
-    /* width: 70%; */
+    width: 70%;
     bottom: 10px;
-    /* height: 18px; */
+    height: 18px; 
     position: absolute;
     left: 5px;
     box-sizing: border-box;
