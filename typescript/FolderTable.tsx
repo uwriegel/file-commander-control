@@ -162,7 +162,7 @@ export const FolderTable = ({
     )
 }
 
-// TODO Restriction
+// TODO Restriction: separete folderItems ans folderTableItems
 
 // TODO Grid splitter type script
 
