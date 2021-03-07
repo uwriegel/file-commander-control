@@ -1,9 +1,12 @@
 import React, { ChangeEvent, useEffect, useRef, useState } from 'react'
+import { CSSTransition } from 'react-transition-group'
 import 'virtual-table-react/dist/index.css'
 import { Column, Table, TableItems, setTableItems, TableItem } from 'virtual-table-react'
 
 // @ts-ignore
 import styles from './styles.module.css'
+// @ts-ignore
+import restrictTransition from './transition.restrict.module.css'
 
 export const setFolderItems = setTableItems
 
@@ -131,6 +134,13 @@ export const FolderTable = ({
                 theme={theme}
                 focused={focused}
                 onFocused={setFocused} />
+            <CSSTransition
+                in={restrictValue.length > 0}
+                timeout={400}
+                classNames={restrictTransition}
+                unmountOnExit>
+               <input className={styles.restrictor} disabled value={restrictValue} />                
+            </CSSTransition>
         </div>
     )
 }
