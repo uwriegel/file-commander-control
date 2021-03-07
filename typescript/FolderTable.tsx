@@ -9,7 +9,6 @@ import styles from './styles.module.css'
 import restrictTransition from './transition.restrict.module.css'
 
 export interface FolderTableItem extends TableItem {
-//    index: number
     name: string
 }
 
@@ -151,7 +150,7 @@ export const FolderTable = ({
                 originalItems.current = items
             setDisplayItems(setFolderItems({
                 items: filteredItems,
-                currentIndex: displayItems.currentIndex
+                currentIndex: 0
             }))
         }
     }
@@ -199,7 +198,7 @@ export const FolderTable = ({
     )
 }
 
-// TODO Restriction: adapt indexes, adapt current index
+
 // TODO Enter on FolderTable -> callback onenter in Folder Test changeItems  A N D  changePath > restrictClose
 
 // TODO Grid splitter type script
