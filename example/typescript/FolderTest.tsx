@@ -1,10 +1,10 @@
 import React, { useState, useRef } from 'react'
 import { FolderTable, setFolderItems, folderItemsChanged } from 'file-commander-control'
 import { TableItem, TableItems, Column, Table } from 'virtual-table-react'
+import { FolderTableItem, FolderTableItems } from '../../dist/FolderTable'
 
-interface FolderItem extends TableItem {
+interface FolderItem extends FolderTableItem {
     index: number
-    col1: string
     col2: string
     col3: string
 }
@@ -33,18 +33,18 @@ export const FolderTest = ({theme}: FolderTestProps) => {
     const onColsChanged = (cols: Column[])=> {}
     const onSort = ()=> {}
 
-    const [items, setItems ] = useState(setFolderItems({ items: [] }) as TableItems)
+    const [items, setItems ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
 
     const onChange = () => {
         setPath("/home/uwe/documents")
-        const folderItems = Array.from(Array(6000).keys()).map(index => ({ col1: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
+        const folderItems = Array.from(Array(6000).keys()).map(index => ({ name: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
         setItems(setFolderItems({ items: folderItems}))
     }
 
     const itemRenderer = (item: TableItem) => {
         const tableItem = item as FolderItem
         return [
-            <td key={1}>{tableItem.col1}</td>,
+            <td key={1}>{tableItem.name}</td>,
             <td key={2}>{tableItem.col2}</td>,
             <td key={3}>{tableItem.col3}</td>	
 	    ]

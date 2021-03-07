@@ -8,9 +8,18 @@ import styles from './styles.module.css'
 // @ts-ignore
 import restrictTransition from './transition.restrict.module.css'
 
-export const setFolderItems = setTableItems
+export interface FolderTableItem extends TableItem {
+//    index: number
+    name: string
+}
 
-export const folderItemsChanged = (items: TableItems) => setFolderItems({ 
+export interface FolderTableItems extends TableItems {
+    items: FolderTableItem[]
+}
+
+export const setFolderItems = (items: FolderTableItems) => setTableItems(items) as FolderTableItems
+
+export const folderItemsChanged = (items: FolderTableItems) => setFolderItems({ 
     items: items.items,
     currentIndex: items.currentIndex 
 })
@@ -22,9 +31,9 @@ export type FolderTableProps = {
     columns: Column[]
     onColumnsChanged: (cols: Column[])=>void
     onSort: (index: number, descending: boolean, isSubItem?: boolean)=>void
-    items: TableItems
+    items: FolderTableItems
     itemRenderer: (item: TableItem)=>JSX.Element[]
-    onItemsChanged: (items: TableItems)=>void
+    onItemsChanged: (items: FolderTableItems)=>void
     path: string
     onPathChanged: (path: string)=>void
 }
@@ -112,16 +121,17 @@ export const FolderTable = ({
         pathInput.current?.select()
     }
 
-    const restrictTo = (val: string) => setRestrictValue(restrictValue + val)
-    // const restrictTo = (val: string) => {
-    //     const newValue = restrictValue + val
-    //     if (restrictValue.length == 0) {
-    //         const filteredItems = items.items.filter(n => n.name.toLocaleLowerCase().startsWith(newValue))
-    //     }
-    //     setRestrictValue(newValue)
-    // }
+    const restrictTo = (val: string) => {
+        const newValue = restrictValue + val
+        if (restrictValue.length == 0) {
+            const filteredItems = items.items.filter(n => n.name.toLocaleLowerCase().startsWith(newValue))
+        }
+        setRestrictValue(newValue)
+    }
 
     const restrictClose = () => setRestrictValue("")
+
+    const onFolderItemsChanged = (items: TableItems) => onItemsChanged(items as FolderTableItems)
 
     return (
         <div className={styles.containerVirtualTable}>
@@ -137,7 +147,7 @@ export const FolderTable = ({
                 onSort={onSort} 
                 items={items}
                 itemRenderer={itemRenderer}
-                onItemsChanged={onItemsChanged} 
+                onItemsChanged={onFolderItemsChanged} 
                 theme={theme}
                 focused={focused}
                 onFocused={setFocused} />
