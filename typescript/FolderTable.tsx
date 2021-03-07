@@ -113,6 +113,13 @@ export const FolderTable = ({
     }
 
     const restrictTo = (val: string) => setRestrictValue(restrictValue + val)
+    // const restrictTo = (val: string) => {
+    //     const newValue = restrictValue + val
+    //     if (restrictValue.length == 0) {
+    //         const filteredItems = items.items.filter(n => n.name.toLocaleLowerCase().startsWith(newValue))
+    //     }
+    //     setRestrictValue(newValue)
+    // }
 
     const restrictClose = () => setRestrictValue("")
 
