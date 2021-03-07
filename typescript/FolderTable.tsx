@@ -41,6 +41,7 @@ export const FolderTable = ({
 }: FolderTableProps) => {
 
     const [pathText, setPathText] = useState("")
+    const [restrictValue, setRestrictValue] = useState<string>("")
     const onInputChange = (sevt: ChangeEvent<HTMLInputElement>) => setPathText(sevt.currentTarget.value)
     useEffect(() => setPathText(path), [path])
 
@@ -53,29 +54,44 @@ export const FolderTable = ({
             pathInput.current?.focus()
             sevt.stopPropagation()
             sevt.preventDefault()
+            return true
         }
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
             items.items.forEach((item, i) => item.isSelected = i >= (items.currentIndex ?? 0)) 
             onItemsChanged(folderItemsChanged(items))
+            return true
         }
         if (evt.which == 36 && evt.shiftKey) { // Shift + home
             items.items.forEach((item, i) => item.isSelected = i <= (items.currentIndex ?? 0)) 
             onItemsChanged(folderItemsChanged(items))
+            return true
         }
         if (evt.which == 45) { // Ins
             const item = items.items[items.currentIndex ?? 0]
             item.isSelected = !item.isSelected
             items.currentIndex = (items.currentIndex ?? 0) + 1
             onItemsChanged(folderItemsChanged(items))
+            return true
         }
         if (evt.which == 107) { // Numlock +
             items.items.forEach(item => item.isSelected = true)
             onItemsChanged(folderItemsChanged(items))
+            return true
         }
         if (evt.which == 109) { // Numlock -
             items.items.forEach(item => item.isSelected = false)
             onItemsChanged(folderItemsChanged(items))
+            return true
         }
+        if (!evt.altKey && !evt.ctrlKey && evt.key.length > 0 && evt.key.length < 2) {
+            restrictTo(evt.key)
+            return true
+        }
+        if (evt.which == 27) { // esc
+            restrictClose()
+            return true
+        }
+        return false
     }
 
     const onPathInput = (sevt: React.KeyboardEvent) => {
@@ -93,16 +109,19 @@ export const FolderTable = ({
         pathInput.current?.select()
     }
 
+    const restrictTo = (val: string) => setRestrictValue(restrictValue + val)
+
+    const restrictClose = () => setRestrictValue("")
+
     return (
-        <div 
-            onKeyDown={onKeyDown}
-            className={styles.containerVirtualTable}>
+        <div className={styles.containerVirtualTable}>
             <input ref={pathInput} className={styles.pathInput} 
                 value={pathText}
                 onChange={onInputChange}
                 onKeyDown={onPathInput}
                 onFocus={onInputFocus}></input>
             <Table 
+                onKeyDown={onKeyDown}
                 columns={columns} 
                 onColumnsChanged={onColumnsChanged} 
                 onSort={onSort} 
