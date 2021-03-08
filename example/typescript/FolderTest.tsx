@@ -41,6 +41,10 @@ export const FolderTest = ({theme}: FolderTestProps) => {
         setItems(setFolderItems({ items: folderItems}))
     }
 
+    const onEnter = (items: FolderTableItem[]) => {
+        console.log("Enter", items)
+    }
+
     const itemRenderer = (item: TableItem) => {
         const tableItem = item as FolderItem
         return [
@@ -65,7 +69,8 @@ export const FolderTest = ({theme}: FolderTestProps) => {
                 itemRenderer={itemRenderer}
                 onItemsChanged={setItems}
                 path={path}
-                onPathChanged={onPathChanged} /> 
+                onPathChanged={onPathChanged}
+                onEnter={onEnter} /> 
         </div>
 	)
 }

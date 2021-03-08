@@ -34,7 +34,8 @@ export type FolderTableProps = {
     itemRenderer: (item: TableItem)=>JSX.Element[]
     onItemsChanged: (items: FolderTableItems)=>void
     path: string
-    onPathChanged: (path: string)=>void
+    onPathChanged: (path: string)=>void,
+    onEnter: (items: FolderTableItem[])=>void
 }
 
 export const FolderTable = ({
@@ -48,7 +49,8 @@ export const FolderTable = ({
     itemRenderer,
     onItemsChanged,
     path,
-    onPathChanged 
+    onPathChanged,
+    onEnter
 }: FolderTableProps) => {
 
     const [pathText, setPathText] = useState("")
@@ -62,6 +64,15 @@ export const FolderTable = ({
     const [displayItems, setDisplayItems] = useState(setFolderItems({ items: [] }) as FolderTableItems)
     useLayoutEffect(() => setDisplayItems(items), [items])
     const originalItems = useRef<FolderTableItems>()
+
+    const getSelectedItems = () => {
+        const selectedItems = displayItems.items.filter(n => n.isSelected)
+        return selectedItems.length > 0 
+            ? selectedItems 
+            : displayItems.currentIndex
+                ? [ displayItems.items[displayItems.currentIndex] ]
+                : []
+    }
 
     const pathInput = useRef<HTMLInputElement>(null)        
 
@@ -85,6 +96,12 @@ export const FolderTable = ({
             pathInput.current?.focus()
             sevt.stopPropagation()
             sevt.preventDefault()
+            return true
+        }
+        if (evt.which == 13) {
+            const items = getSelectedItems()
+            if (items)
+                onEnter(items)
             return true
         }
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
@@ -169,6 +186,12 @@ export const FolderTable = ({
         onItemsChanged(folderItems)
     }
 
+    const onDoubleClick = (sevt: React.MouseEvent) => {
+        const items = getSelectedItems()
+        if (items)
+            onEnter(items)
+    }
+
     return (
         <div className={styles.containerVirtualTable}>
             <input ref={pathInput} className={styles.pathInput} 
@@ -186,7 +209,8 @@ export const FolderTable = ({
                 onItemsChanged={onFolderItemsChanged} 
                 theme={theme}
                 focused={focused}
-                onFocused={setFocused} />
+                onFocused={setFocused}
+                onDoubleClick={onDoubleClick} />
             <CSSTransition
                 in={restrictValue.length > 0}
                 timeout={400}
@@ -197,9 +221,6 @@ export const FolderTable = ({
         </div>
     )
 }
-
-
-// TODO Enter on FolderTable -> callback onenter in Folder Test changeItems  A N D  changePath > restrictClose
 
 // TODO Grid splitter type script
 
