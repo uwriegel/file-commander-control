@@ -1,6 +1,8 @@
 import React, { useLayoutEffect, useState} from 'react'
 import { FolderTest } from './FolderTest'
 import 'file-commander-control/dist/index.css'
+import 'grid-splitter-react/dist/index.css'
+import { Commander } from './Commander'
 
 const App = () => {
     const [appChoice, setAppChoice] = useState(0)
@@ -45,6 +47,7 @@ const App = () => {
 			<div>
 				<select onChange={onAppChange}>
 					<option>Folder</option>
+                    <option>Commander</option>
 				</select>
 				<select onChange={onThemeChange}>
                     <option>Blue</option>
@@ -54,7 +57,7 @@ const App = () => {
 			</div>
 			{appChoice == 0 
 				? <FolderTest theme={theme} /> 
-				: null}
+				: <Commander theme={theme} />}
 		</div>  
 	)
 }
