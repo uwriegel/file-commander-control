@@ -101,20 +101,34 @@ export const Commander = ({theme}: CommanderProps) => {
             <SplitterGrid 
                 first={(
                     <FolderTable 
-                    theme={theme} 
-                    focused={focusedLeft} 
-                    setFocused={setFocusedLeft} 
-                    columns={columnsLeft} 
-                    onColumnsChanged={onColsChangedLeft} 
-                    onSort={onSortLeft}
-                    items={itemsLeft}
-                    itemRenderer={itemRenderer}
-                    onItemsChanged={setItemsLeft}
-                    path={pathLeft}
-                    onPathChanged={onPathChangedLeft}
-                    onEnter={onEnter} /> 
+                        theme={theme} 
+                        focused={focusedLeft} 
+                        setFocused={setFocusedLeft} 
+                        columns={columnsLeft} 
+                        onColumnsChanged={onColsChangedLeft} 
+                        onSort={onSortLeft}
+                        items={itemsLeft}
+                        itemRenderer={itemRenderer}
+                        onItemsChanged={setItemsLeft}
+                        path={pathLeft}
+                        onPathChanged={onPathChangedLeft}
+                        onEnter={onEnter} /> 
                 )} 
-                second={<div>Welt</div>} 
+                second={(
+                    <FolderTable 
+                        theme={theme} 
+                        focused={focusedRight} 
+                        setFocused={setFocusedRight} 
+                        columns={columnsRight} 
+                        onColumnsChanged={onColsChangedRight} 
+                        onSort={onSortRight}
+                        items={itemsRight}
+                        itemRenderer={itemRenderer}
+                        onItemsChanged={setItemsRight}
+                        path={pathRight}
+                        onPathChanged={onPathChangedRight}
+                        onEnter={onEnter} /> 
+                )} 
             />
         </div>
     )
