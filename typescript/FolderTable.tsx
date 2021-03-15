@@ -222,9 +222,7 @@ export const FolderTable = ({
     )
 }
 
-// TODO Grid splitter type script
-
-// TODO two folder items
+// TODO Status with item and # items/# of selected items
 
 // TODO F3 viewer
 
