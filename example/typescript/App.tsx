@@ -13,12 +13,18 @@ const App = () => {
     const onThemeChange = (evt: React.ChangeEvent<HTMLSelectElement>) => {
         switch (evt.target.selectedIndex) {
             case 0:
-                changeTheme("blue")
+                changeTheme("adwaita")
                 break
             case 1:
-                changeTheme("yaru")
+                changeTheme("adwaitadark")
                 break
             case 2:
+                changeTheme("blue")
+                break
+            case 3:
+                changeTheme("yaru")
+                break
+            case 4:
                 changeTheme("yarudark")
                 break
         }
@@ -40,7 +46,7 @@ const App = () => {
     }
 
     useLayoutEffect(() => {
-        changeTheme("blue")
+        changeTheme("adwaita")
     }, [])
 
     return (	
@@ -52,6 +58,8 @@ const App = () => {
                     <option>Commander</option>
 				</select>
 				<select onChange={onThemeChange}>
+                    <option>Adwaita</option>
+                    <option>Adwaita dark</option>
                     <option>Blue</option>
                     <option>Yaru</option>
                     <option>Yaru dark</option>

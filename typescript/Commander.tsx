@@ -3,17 +3,13 @@ import { SplitterGrid } from 'grid-splitter-react'
 import { FolderTable, setFolderItems, folderItemsChanged, FolderTableItem, FolderTableItems } from './FolderTable'
 import { Column, TableItem } from 'virtual-table-react'
 
-interface FolderItem extends FolderTableItem {
-    index: number
-    col2: string
-    col3: string
-}
-
 type CommanderProps = {
-    theme: string
+    theme: string,
+    getItems: ()=>FolderTableItem[],
+    itemRenderer: (item: TableItem)=>JSX.Element[]
 }
 
-export const Commander = ({theme}: CommanderProps) => {
+export const Commander = ({theme, getItems, itemRenderer}: CommanderProps) => {
 // ============================== States =======================================
 
     const [focusedLeft, setFocusedLeft] = useState(false)
@@ -65,7 +61,7 @@ export const Commander = ({theme}: CommanderProps) => {
 
     const onChange = (folderId: 1|2) => {
         setPath (folderId) ("/home/uwe/documents")
-        const folderItems = Array.from(Array(6000).keys()).map(index => ({ name: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
+        const folderItems = getItems()
         setItems (folderId) (setFolderItems({ items: folderItems}))
     }
 
@@ -82,15 +78,6 @@ export const Commander = ({theme}: CommanderProps) => {
 
     const onEnter = (items: FolderTableItem[]) => {
         console.log("Enter", items)
-    }
-
-    const itemRenderer = (item: TableItem) => {
-        const tableItem = item as FolderItem
-        return [
-            <td key={1}>{tableItem.name}</td>,
-            <td key={2}>{tableItem.col2}</td>,
-            <td key={3}>{tableItem.col3}</td>	
-	    ]
     }
 
     return (	
