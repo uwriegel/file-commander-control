@@ -222,6 +222,9 @@ export const FolderTable = ({
     )
 }
 
+// TODO Nodejs webserver with filesystem-utilities
+// TODO Check web server
+// TODO default Columns empty, pathes: root, /home/uwe, ...
 // TODO Status with item and # items/# of selected items
 
 // TODO F3 viewer
