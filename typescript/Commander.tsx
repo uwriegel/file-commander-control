@@ -3,13 +3,18 @@ import { SplitterGrid } from 'grid-splitter-react'
 import { FolderTable, setFolderItems, folderItemsChanged, FolderTableItem, FolderTableItems } from './FolderTable'
 import { Column, TableItem } from 'virtual-table-react'
 
+type PathInfo = {
+    columns: Column[]
+}
+
 type CommanderProps = {
     theme: string,
-    getItems: (path: string)=>Promise<FolderTableItem[]>,
+    getPathInfo: (path: string)=>PathInfo
+    getItems: (pathInfo: PathInfo)=>Promise<FolderTableItem[]>,
     itemRenderer: (item: TableItem)=>JSX.Element[]
 }
 
-export const Commander = ({theme, getItems, itemRenderer}: CommanderProps) => {
+export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: CommanderProps) => {
 // ============================== States =======================================
 
     const [focusedLeft, setFocusedLeft] = useState(false)
@@ -19,16 +24,9 @@ export const Commander = ({theme, getItems, itemRenderer}: CommanderProps) => {
     const [pathRight, setPathRight] = useState("")
     const setPath = (folderId: 1|2) => folderId == 1 ? setPathLeft : setPathRight
 
-    const [columnsLeft, setColumnsLeft] = useState([
-        { name: "Eine Spalte", isSortable: true }, 
-        { name: "Zweite. Spalte" }, 
-        { name: "Letzte Spalte", isSortable: true }
-    ] as Column[])
-    const [columnsRight, setColumnsRight] = useState([
-        { name: "Eine Spalte", isSortable: true }, 
-        { name: "Zweite. Spalte" }, 
-        { name: "Letzte Spalte", isSortable: true }
-    ] as Column[])
+    const [columnsLeft, setColumnsLeft] = useState([{ name: "Name" } ] as Column[])
+    const [columnsRight, setColumnsRight] = useState([{ name: "Name" } ] as Column[])
+    const setColumns = (folderId: 1|2) => folderId == 1 ? setColumnsLeft : setColumnsRight
 
     const [itemsLeft, setItemsLeft ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
     const [itemsRight, setItemsRight ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
@@ -60,7 +58,11 @@ export const Commander = ({theme, getItems, itemRenderer}: CommanderProps) => {
 // ============================== States =======================================
 
     const onChange = async (folderId: 1|2) => {
-        const folderItems = await getItems("")
+        const pathInfo = getPathInfo("/home/uwe/documents")
+        setPath (folderId) ("")
+        setColumns (folderId) (pathInfo.columns)
+        const folderItems = await getItems(pathInfo)
+
         setPath (folderId) ("/home/uwe/documents")
         setItems (folderId) (setFolderItems({ items: folderItems}))
     }

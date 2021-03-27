@@ -24,11 +24,20 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
 	    ]
     }
 
+    const getPathInfo = (path: string) => ({
+        columns: [
+            { name: "Eine Spalte", isSortable: true }, 
+            { name: "Zweite. Spalte" }, 
+            { name: "Letzte Spalte", isSortable: true }
+        ],
+        path
+    })
+    
     const getItems = (path: string) => new Promise<FolderTableItem[]>((res, rej) => {
         const items = Array.from(Array(6000).keys()).map(index => ({ name: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
         setTimeout(() => res(items), 300)
     })
          
-    return <Commander theme={theme} getItems={getItems} itemRenderer={itemRenderer} />
+    return <Commander theme={theme} getPathInfo={getPathInfo} getItems={getItems} itemRenderer={itemRenderer} />
 }
 

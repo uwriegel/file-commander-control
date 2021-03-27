@@ -9,6 +9,7 @@
   },
   "dependencies": {
     "file-commander-control": "file:..",
+    "filesystem-utilities": "^2.0.1",
     "grid-splitter-react": "file:../node_modules/grid-splitter-react",
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
