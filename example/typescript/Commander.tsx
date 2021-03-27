@@ -24,8 +24,11 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
 	    ]
     }
 
-    const getItems = () => Array.from(Array(6000).keys()).map(index => ({ name: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
-
+    const getItems = (path: string) => new Promise<FolderTableItem[]>((res, rej) => {
+        const items = Array.from(Array(6000).keys()).map(index => ({ name: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
+        setTimeout(() => res(items), 300)
+    })
+         
     return <Commander theme={theme} getItems={getItems} itemRenderer={itemRenderer} />
 }
 

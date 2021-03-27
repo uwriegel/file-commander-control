@@ -5,7 +5,7 @@ import { Column, TableItem } from 'virtual-table-react'
 
 type CommanderProps = {
     theme: string,
-    getItems: ()=>FolderTableItem[],
+    getItems: (path: string)=>Promise<FolderTableItem[]>,
     itemRenderer: (item: TableItem)=>JSX.Element[]
 }
 
@@ -59,9 +59,9 @@ export const Commander = ({theme, getItems, itemRenderer}: CommanderProps) => {
 
 // ============================== States =======================================
 
-    const onChange = (folderId: 1|2) => {
+    const onChange = async (folderId: 1|2) => {
+        const folderItems = await getItems("")
         setPath (folderId) ("/home/uwe/documents")
-        const folderItems = getItems()
         setItems (folderId) (setFolderItems({ items: folderItems}))
     }
 
