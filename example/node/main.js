@@ -5,13 +5,20 @@ const url = require('url')
 console.log("Development test server started")
 
 const requestListener = async (req, res) => {
-    const reqUrl = new URL(req.url, "http://localhost")
-    console.log(reqUrl, reqUrl.searchParams, reqUrl.searchParams.get('path'))
-
-    //const files = await addon.getFiles("/home/uwe/Bilder")
-    const files = await addon.getDrives()
-    res.setHeader("Content-Type", "application/json")
-    res.end(JSON.stringify(files))
+    try {
+        const reqUrl = new URL(req.url, "http://localhost")
+        
+        const files = 
+            reqUrl.pathname == "/root" 
+            ? await addon.getDrives() 
+            : reqUrl.pathname == "/getFiles" 
+                ? await addon.getFiles(reqUrl.searchParams.get('path'))
+                : null
+        res.setHeader("Content-Type", "application/json")
+        res.end(JSON.stringify(files))
+    } catch (err) {
+        console.log(err)
+    }
 }
 
 const port = 3333
