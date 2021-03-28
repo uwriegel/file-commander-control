@@ -67,7 +67,18 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
         setItems (folderId) (setFolderItems({ items: folderItems}))
     }
 
-    useEffect(() => setFocusedLeft(true), [])
+    useEffect(() => {
+        const initialize = async () => {
+            // TODO: get root, fill columns, ...
+            await onChange (1)
+            await onChange (2)
+            setFocusedLeft(true)
+        }
+        initialize()
+    }, [])
+
+
+
     const activeFolder = useRef<1|2>(1)
     useLayoutEffect(() => {
         if (focusedLeft)
@@ -84,8 +95,6 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
 
     return (	
         <div className={"commander"}>
-            <button onClick={onChangeActive}>Fill</button>
-            <button onClick={onSetFocusLeft}>Set Focus</button>
             <SplitterGrid 
                 first={(
                     <FolderTable 

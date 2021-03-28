@@ -53,9 +53,9 @@ const App = () => {
 		<div>
 			<div>
 				<select onChange={onAppChange}>
+                    <option>Commander</option>
 					<option>Folder</option>
                     <option>CommanderTest</option>
-                    <option>Commander</option>
 				</select>
 				<select onChange={onThemeChange}>
                     <option>Adwaita</option>
@@ -66,10 +66,10 @@ const App = () => {
 				</select>
 			</div>
 			{appChoice == 0 
-				? <FolderTest theme={theme} /> 
+				? <CommanderContainer theme={theme} /> 
 				: appChoice == 1 
-                    ? <CommanderTest theme={theme} />
-                    : <CommanderContainer theme={theme} />
+                    ? <FolderTest theme={theme} />
+                    : <CommanderTest theme={theme} />
             }
 		</div>  
 	)
