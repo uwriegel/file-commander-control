@@ -3,13 +3,13 @@ import { SplitterGrid } from 'grid-splitter-react'
 import { FolderTable, setFolderItems, folderItemsChanged, FolderTableItem, FolderTableItems } from './FolderTable'
 import { Column, TableItem } from 'virtual-table-react'
 
-type PathInfo = {
+export type PathInfo = {
     columns: Column[]
 }
 
 type CommanderProps = {
     theme: string,
-    getPathInfo: (path: string)=>PathInfo
+    getPathInfo: (path: string | null)=>PathInfo
     getItems: (pathInfo: PathInfo)=>Promise<FolderTableItem[]>,
     itemRenderer: (item: TableItem)=>JSX.Element[]
 }
@@ -41,14 +41,8 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
         setFocusedRight(true)
     }   
 
-    const onPathChangedLeft = (path: string) => {
-        alert(path)
-        onChange(1)
-    }
-    const onPathChangedRight = (path: string) => {
-        alert(path)
-        onChange(2)
-    }
+    const onPathChangedLeft = (path: string) =>  onChange(1, path)
+    const onPathChangedRight = (path: string) => onChange(2, path)
 
     const onColsChangedLeft = (cols: Column[])=> {}
     const onColsChangedRight = (cols: Column[])=> {}
@@ -57,8 +51,8 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
 
 // ============================== States =======================================
 
-    const onChange = async (folderId: 1|2) => {
-        const pathInfo = getPathInfo("/home/uwe/documents")
+    const onChange = async (folderId: 1|2, path: string | null) => {
+        const pathInfo = getPathInfo(path)
         setPath (folderId) ("")
         setColumns (folderId) (pathInfo.columns)
         const folderItems = await getItems(pathInfo)
@@ -69,15 +63,12 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
 
     useEffect(() => {
         const initialize = async () => {
-            // TODO: get root, fill columns, ...
-            await onChange (1)
-            await onChange (2)
+            await onChange (1, null)
+            await onChange (2, null)
             setFocusedLeft(true)
         }
         initialize()
     }, [])
-
-
 
     const activeFolder = useRef<1|2>(1)
     useLayoutEffect(() => {
@@ -86,8 +77,6 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
         else if (focusedRight)
             activeFolder.current = 2
     }, [focusedLeft, focusedRight])
-
-    const onChangeActive = () => onChange(activeFolder.current)
 
     const onEnter = (items: FolderTableItem[]) => {
         console.log("Enter", items)

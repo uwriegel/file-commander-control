@@ -1,7 +1,5 @@
 import React from 'react'
-import { Commander } from 'file-commander-control'
-import { FolderTableItem } from '../../dist/FolderTable'
-import { TableItem } from 'virtual-table-react'
+import { Commander, PathInfo, FolderTableItem, TableItem  } from 'file-commander-control'
 
 type CommanderProps = {
     theme: string
@@ -24,7 +22,7 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
 	    ]
     }
 
-    const getPathInfo = (path: string) => ({
+    const getPathInfo = (path: string | null) => ({
         columns: [
             { name: "Eine Spalte", isSortable: true }, 
             { name: "Zweite. Spalte" }, 
@@ -33,7 +31,7 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
         path
     })
     
-    const getItems = (path: string) => new Promise<FolderTableItem[]>((res, rej) => {
+    const getItems = (pathInfo: PathInfo) => new Promise<FolderTableItem[]>((res, rej) => {
         const items = Array.from(Array(6000).keys()).map(index => ({ name: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
         setTimeout(() => res(items), 300)
     })
