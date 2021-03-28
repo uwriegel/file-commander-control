@@ -4,7 +4,8 @@ import { FolderTable, setFolderItems, folderItemsChanged, FolderTableItem, Folde
 import { Column, TableItem } from 'virtual-table-react'
 
 export type PathInfo = {
-    columns: Column[]
+    columns: Column[],
+    path: string
 }
 
 type CommanderProps = {
@@ -20,13 +21,24 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
     const [focusedLeft, setFocusedLeft] = useState(false)
     const [focusedRight, setFocusedRight] = useState(false)
 
-    const [pathLeft, setPathLeft] = useState("")
-    const [pathRight, setPathRight] = useState("")
-    const setPath = (folderId: 1|2) => folderId == 1 ? setPathLeft : setPathRight
-
     const [columnsLeft, setColumnsLeft] = useState([{ name: "Name" } ] as Column[])
     const [columnsRight, setColumnsRight] = useState([{ name: "Name" } ] as Column[])
-    const setColumns = (folderId: 1|2) => folderId == 1 ? setColumnsLeft : setColumnsRight
+
+    const [pathLeft, setPathLeft] = useState("")
+    const [pathRight, setPathRight] = useState("")
+    const pathInfoLeft = useRef<PathInfo>()
+    const pathInfoRight = useRef<PathInfo>()
+    const setPathInfoLeft = (pathInfo: PathInfo) => {
+        pathInfoLeft.current = pathInfo
+        setPathLeft(pathInfo.path)
+        setColumnsLeft(pathInfo.columns)
+    }
+    const setPathInfoRight = (pathInfo: PathInfo) => {
+        pathInfoRight.current = pathInfo
+        setPathRight(pathInfo.path)
+        setColumnsRight(pathInfo.columns)
+    }
+    const setPathInfo = (folderId: 1|2) => folderId == 1 ? setPathInfoLeft : setPathInfoRight
 
     const [itemsLeft, setItemsLeft ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
     const [itemsRight, setItemsRight ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
@@ -53,11 +65,8 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
 
     const onChange = async (folderId: 1|2, path: string | null) => {
         const pathInfo = getPathInfo(path)
-        setPath (folderId) ("")
-        setColumns (folderId) (pathInfo.columns)
+        setPathInfo (folderId) (pathInfo)
         const folderItems = await getItems(pathInfo)
-
-        setPath (folderId) ("/home/uwe/documents")
         setItems (folderId) (setFolderItems({ items: folderItems}))
     }
 
@@ -119,3 +128,7 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
         </div>
     )
 }
+// TODO changePath when editing path field
+// TODO getPathInfo with recent pathInfo
+// TODO ParentItem
+// TODO TAB to change Focus

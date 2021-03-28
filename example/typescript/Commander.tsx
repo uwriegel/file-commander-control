@@ -28,7 +28,7 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
             { name: "Zweite. Spalte" }, 
             { name: "Letzte Spalte", isSortable: true }
         ],
-        path
+        path: path ? path : "root"
     })
     
     const getItems = (pathInfo: PathInfo) => new Promise<FolderTableItem[]>((res, rej) => {
