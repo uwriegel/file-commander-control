@@ -1,5 +1,11 @@
 import React from 'react'
-import { Commander, PathInfo, FolderTableItem, TableItem  } from 'file-commander-control'
+import { Commander, Column, PathInfo, FolderTableItem, TableItem  } from 'file-commander-control'
+
+type DriveItem = {
+    name: string,
+    description: string,
+    driveType: string
+}
 
 type CommanderProps = {
     theme: string
@@ -22,19 +28,38 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
 	    ]
     }
 
-    const getPathInfo = (path: string | null) => ({
-        columns: [
-            { name: "Eine Spalte", isSortable: true }, 
-            { name: "Zweite. Spalte" }, 
-            { name: "Letzte Spalte", isSortable: true }
-        ],
-        path: path ? path : "root"
-    })
-    
-    const getItems = (pathInfo: PathInfo) => new Promise<FolderTableItem[]>((res, rej) => {
-        const items = Array.from(Array(6000).keys()).map(index => ({ name: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
-        setTimeout(() => res(items), 300)
-    })
+    const getPathInfo = (path: string | null) => {
+        path = path ? path : "root"
+        return { 
+            columns: path != "root" 
+            ? [
+                { name: "Name", isSortable: true }, 
+                { name: "Erw.", isSortable: true, subItem: true }, 
+                { name: "Letzte Spalte", isSortable: true }
+            ] as Column[]
+            : [
+                { name: "Beschreibung" }, 
+                { name: "Name" }, 
+                { name: "Mountpoint" }, 
+                { name: "Größe" }, 
+            ] as Column[],
+            path 
+        }
+    }
+
+    const getItems = async (pathInfo: PathInfo) => {
+        if (pathInfo.path == "root") {
+            const res = await fetch(`http://localhost:3333/root`)
+            const items = await res.json() as DriveItem[]
+            console.log(items)
+            return items.map(n => ({name: n.name, col2: n.description, col3: n.driveType }))
+        } else {
+            const res = await fetch(`http://localhost:3333/getFiles?path=${pathInfo.path}`)
+            return Array.from(Array(6000).keys()).map(index => ({ name: "items", col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
+        }
+
+        
+    }
          
     return <Commander theme={theme} getPathInfo={getPathInfo} getItems={getItems} itemRenderer={itemRenderer} />
 }
