@@ -20,6 +20,15 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
 
     const [focusedLeft, setFocusedLeft] = useState(false)
     const [focusedRight, setFocusedRight] = useState(false)
+    const setFocusLeft = () => {
+        setFocusedRight(false)
+        setFocusedLeft(true)
+    }   
+    const setFocusRight = () => {
+        setFocusedLeft(false)
+        setFocusedRight(true)
+    }   
+    const setFocus = (folderId: 1|2) => folderId == 1 ? setFocusLeft() : setFocusRight()
 
     const [columnsLeft, setColumnsLeft] = useState([{ name: "Name" } ] as Column[])
     const [columnsRight, setColumnsRight] = useState([{ name: "Name" } ] as Column[])
@@ -44,15 +53,6 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
     const [itemsRight, setItemsRight ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
     const setItems = (folderId: 1|2) => folderId == 1 ? setItemsLeft : setItemsRight
 
-    const onSetFocusLeft = () => {
-        setFocusedLeft(true)
-        setFocusedRight(false)
-    }   
-    const onSetFocusRight = () => {
-        setFocusedLeft(false)
-        setFocusedRight(true)
-    }   
-
     const onPathChangedLeft = (path: string) =>  onChange(1, path)
     const onPathChangedRight = (path: string) => onChange(2, path)
 
@@ -68,13 +68,14 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
         setPathInfo (folderId) (pathInfo)
         const folderItems = await getItems(pathInfo)
         setItems (folderId) (setFolderItems({ items: folderItems}))
+        setFocus (folderId)
     }
 
     useEffect(() => {
         const initialize = async () => {
             await onChange (1, null)
             await onChange (2, null)
-            setFocusedLeft(true)
+            setFocus(1)
         }
         initialize()
     }, [])
@@ -129,6 +130,17 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
     )
 }
 // TODO changePath when editing path field
+// TODO changePath when enter
 // TODO getPathInfo with recent pathInfo
 // TODO ParentItem
 // TODO TAB to change Focus
+
+// TODO Status with item and # items/# of selected items
+
+// TODO F3 viewer
+
+// TODO in hyper rename fill directory items and drive items and icons
+
+
+// TODO parent item not selectable: isSelectable property per folder item
+// TODO Exif info in another style

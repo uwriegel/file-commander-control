@@ -222,15 +222,3 @@ export const FolderTable = ({
     )
 }
 
-// TODO Nodejs webserver with filesystem-utilities
-// TODO Check web server
-// TODO default Columns empty, pathes: root, /home/uwe, ...
-// TODO Status with item and # items/# of selected items
-
-// TODO F3 viewer
-
-// TODO in hyper rename fill directory items and drive items and icons
-
-
-// TODO parent item not selectable: isSelectable property per folder item
-// TODO Exif info in another style
