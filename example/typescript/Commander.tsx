@@ -7,6 +7,12 @@ type DriveItem = {
     driveType: string
 }
 
+type FileItem = {
+    name: string,
+    description: string,
+    driveType: string
+}
+
 type NormalizedPath = {
     path: string,
 }
@@ -23,6 +29,7 @@ export interface FolderItem extends FolderTableItem {
 
 export const CommanderContainer = ({theme}: CommanderProps) => {
 
+    // TODO: ItemRenderer in pathInfo
     const itemRenderer = (item: TableItem) => {
         const tableItem = item as FolderItem
         return [
@@ -59,14 +66,13 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
         if (pathInfo.path == "root") {
             const res = await fetch(`http://localhost:3333/root`)
             const items = await res.json() as DriveItem[]
-            console.log(items)
             return items.map(n => ({name: n.name, col2: n.description, col3: n.driveType }))
         } else {
             const res = await fetch(`http://localhost:3333/getFiles?path=${pathInfo.path}`)
-            return Array.from(Array(6000).keys()).map(index => ({ name: "items", col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
+            const items = await res.json() as FileItem[]
+            console.log(items)
+            return items.map(n => ({name: n.name, col2: "n.description", col3: "n.driveType" }))
         }
-
-        
     }
          
     return <Commander theme={theme} getPathInfo={getPathInfo} getItems={getItems} itemRenderer={itemRenderer} />
