@@ -7,6 +7,10 @@ type DriveItem = {
     driveType: string
 }
 
+type NormalizedPath = {
+    path: string,
+}
+
 type CommanderProps = {
     theme: string
 }
@@ -28,8 +32,12 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
 	    ]
     }
 
-    const getPathInfo = (path: string | null) => {
+    const getPathInfo = async (path: string | null) => {
         path = path ? path : "root"
+        if (path != "root") {
+            const resPath = await fetch(`http://localhost:3333/normalize?path=${path}`)
+            path = (await resPath.json() as NormalizedPath).path
+        }
         return { 
             columns: path != "root" 
             ? [

@@ -10,7 +10,7 @@ export type PathInfo = {
 
 type CommanderProps = {
     theme: string,
-    getPathInfo: (path: string | null)=>PathInfo
+    getPathInfo: (path: string | null)=>Promise<PathInfo>
     getItems: (pathInfo: PathInfo)=>Promise<FolderTableItem[]>,
     itemRenderer: (item: TableItem)=>JSX.Element[]
 }
@@ -64,7 +64,7 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
 // ============================== States =======================================
 
     const onChange = async (folderId: 1|2, path: string | null) => {
-        const pathInfo = getPathInfo(path)
+        const pathInfo = await getPathInfo(path)
         setPathInfo (folderId) (pathInfo)
         const folderItems = await getItems(pathInfo)
         setItems (folderId) (setFolderItems({ items: folderItems}))
@@ -129,10 +129,9 @@ export const Commander = ({theme, getPathInfo, getItems, itemRenderer}: Commande
         </div>
     )
 }
-// TODO changePath when editing path field
-// TODO changePath when enter
-// TODO getPathInfo with recent pathInfo
 // TODO ParentItem
+// TODO Sorting
+// TODO changePath when editing path field to the same value
 // TODO TAB to change Focus
 
 // TODO Status with item and # items/# of selected items

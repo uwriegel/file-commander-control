@@ -1,6 +1,7 @@
 const addon = require('filesystem-utilities')
 const express = require('express')
 const cors = require('cors')
+const ioPath = require('path')
 
 console.log("Development test server started")
 
@@ -15,6 +16,11 @@ app.get('/root', async (req, res) => {
 app.get('/getFiles', async (req, res) => {
     const files = await addon.getFiles(req.query["path"])
     res.json(files)
+})
+
+app.get('/normalize', async (req, res) => {
+    const normalizedPath = ioPath.normalize(req.query["path"])
+    res.json({path: normalizedPath})
 })
 
 const port = 3333
