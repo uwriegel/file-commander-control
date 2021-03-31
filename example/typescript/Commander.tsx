@@ -9,8 +9,8 @@ type DriveItem = {
 
 type FileItem = {
     name: string,
-    description: string,
-    driveType: string
+    time: Date,
+    size: number
 }
 
 type NormalizedPath = {
@@ -21,21 +21,22 @@ type CommanderProps = {
     theme: string
 }
 
-export interface FolderItem extends FolderTableItem {
-    index: number
-    col2: string
-    col3: string
-}
-
 export const CommanderContainer = ({theme}: CommanderProps) => {
-
-    // TODO: ItemRenderer in pathInfo
-    const itemRenderer = (item: TableItem) => {
-        const tableItem = item as FolderItem
+    const itemRendererRoot = (item: TableItem) => {
+        const tableItem = item as DriveItem
         return [
             <td key={1}>{tableItem.name}</td>,
-            <td key={2}>{tableItem.col2}</td>,
-            <td key={3}>{tableItem.col3}</td>	
+            <td key={2}>{tableItem.description}</td>,
+            <td key={3}>{tableItem.driveType}</td>	
+	    ]
+    }
+
+    const itemRendererFiles = (item: TableItem) => {
+        const tableItem = item as FileItem
+        return [
+            <td key={1}>{tableItem.name}</td>,
+            <td key={2}>{tableItem.time}</td>,
+            <td key={3}>{tableItem.size}</td>	
 	    ]
     }
 
@@ -48,9 +49,9 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
         return { 
             columns: path != "root" 
             ? [
-                { name: "Name", isSortable: true }, 
-                { name: "Erw.", isSortable: true, subItem: true }, 
-                { name: "Letzte Spalte", isSortable: true }
+                { name: "Name", isSortable: true, subItem: "Erw."}, 
+                { name: "Datum", isSortable: true },
+                { name: "Größe", isSortable: true }
             ] as Column[]
             : [
                 { name: "Beschreibung" }, 
@@ -58,6 +59,7 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
                 { name: "Mountpoint" }, 
                 { name: "Größe" }, 
             ] as Column[],
+            itemRenderer: path != "root" ? itemRendererFiles : itemRendererRoot,
             path 
         }
     }
@@ -65,16 +67,26 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
     const getItems = async (pathInfo: PathInfo) => {
         if (pathInfo.path == "root") {
             const res = await fetch(`http://localhost:3333/root`)
-            const items = await res.json() as DriveItem[]
-            return items.map(n => ({name: n.name, col2: n.description, col3: n.driveType }))
+            return await res.json() as DriveItem[]
+            
+            // description: "sdc1"
+            // driveType: "vfat"
+            // mountPoint: "/boot/efi"
+            // name: "/boot/efi"
+            // size: 649068544
+            // type: 1
         } else {
             const res = await fetch(`http://localhost:3333/getFiles?path=${pathInfo.path}`)
-            const items = await res.json() as FileItem[]
-            console.log(items)
-            return items.map(n => ({name: n.name, col2: "n.description", col3: "n.driveType" }))
+            return await res.json() as FileItem[]
+
+            // isDirectory: true
+            // isHidden: false
+            // name: "Bücher"
+            // size: 4096
+            // time: "2021-02-19T17:43:56.000Z"            
         }
     }
          
-    return <Commander theme={theme} getPathInfo={getPathInfo} getItems={getItems} itemRenderer={itemRenderer} />
+    return <Commander theme={theme} getPathInfo={getPathInfo} getItems={getItems} />
 }
 
