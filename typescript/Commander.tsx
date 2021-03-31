@@ -4,18 +4,20 @@ import { FolderTable, setFolderItems, folderItemsChanged, FolderTableItem, Folde
 import { Column, TableItem } from 'virtual-table-react'
 
 export type PathInfo = {
+    type: string, 
     columns: Column[],
     path: string,
     itemRenderer: (item: TableItem)=>JSX.Element[]
 }
 
 type CommanderProps = {
+    namespace: string,
     theme: string,
     getPathInfo: (path: string | null)=>Promise<PathInfo>
     getItems: (pathInfo: PathInfo)=>Promise<FolderTableItem[]>,
 }
 
-export const Commander = ({theme, getPathInfo, getItems}: CommanderProps) => {
+export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderProps) => {
 // ============================== States =======================================
 
     const [focusedLeft, setFocusedLeft] = useState(false)
@@ -37,15 +39,31 @@ export const Commander = ({theme, getPathInfo, getItems}: CommanderProps) => {
     const [pathRight, setPathRight] = useState("")
     const pathInfoLeft = useRef<PathInfo>()
     const pathInfoRight = useRef<PathInfo>()
+    const getColumnsWithWidths = (type: string, folder: string, columns: Column[]) => {
+        const cached = localStorage.getItem(`${namespace}-${type}-${folder}-columnWiths`)        
+        const widths = cached ? JSON.parse(cached) as number[] : null
+        console.log("Weiten", widths)
+        return widths 
+            ? columns.map((n, i) => ({
+                columnsSort: n.columnsSort,
+                isSortable: n.isSortable,
+                name: n.name,
+                subItem: n.subItem,
+                subItemSort: n.subItemSort,
+                width: widths[i]
+            }))
+            : columns
+    }
+
     const setPathInfoLeft = (pathInfo: PathInfo) => {
         pathInfoLeft.current = pathInfo
         setPathLeft(pathInfo.path)
-        setColumnsLeft(pathInfo.columns)
+        setColumnsLeft(getColumnsWithWidths(pathInfo.type, "left", pathInfo.columns))
     }
     const setPathInfoRight = (pathInfo: PathInfo) => {
         pathInfoRight.current = pathInfo
         setPathRight(pathInfo.path)
-        setColumnsRight(pathInfo.columns)
+        setColumnsRight(getColumnsWithWidths(pathInfo.type, "right", pathInfo.columns))
     }
     const setPathInfo = (folderId: 1|2) => folderId == 1 ? setPathInfoLeft : setPathInfoRight
     const getItemRendererLeft = () => pathInfoLeft.current ? pathInfoLeft.current.itemRenderer : (item: TableItem) => ([] as JSX.Element[])
@@ -59,8 +77,14 @@ export const Commander = ({theme, getPathInfo, getItems}: CommanderProps) => {
     const onPathChangedLeft = (path: string) =>  onChange(1, path)
     const onPathChangedRight = (path: string) => onChange(2, path)
 
-    const onColsChangedLeft = (cols: Column[])=> setColumnsLeft(cols)
-    const onColsChangedRight = (cols: Column[])=> setColumnsRight(cols)
+    const onColsChangedLeft = (cols: Column[])=> {
+        localStorage.setItem(`${namespace}-${pathInfoLeft.current?.type}-left-columnWiths`, JSON.stringify(pathInfoLeft.current?.columns.map(n => n.width)))
+        setColumnsLeft(cols)
+    }
+    const onColsChangedRight = (cols: Column[])=> {
+        localStorage.setItem(`${namespace}-${pathInfoRight.current?.type}-right-columnWiths`, JSON.stringify(pathInfoRight.current?.columns.map(n => n.width)))
+        setColumnsRight(cols)
+    }
     const onSortLeft = ()=> {}
     const onSortRight = ()=> {}
 
@@ -132,8 +156,11 @@ export const Commander = ({theme, getPathInfo, getItems}: CommanderProps) => {
         </div>
     )
 }
-// TODO ParentItem
+
 // TODO Column withs saving
+// TODO Directory and Files
+// TODO Icons
+// TODO ParentItem
 // TODO Sorting
 // TODO changePath when editing path field to the same value
 // TODO TAB to change Focus

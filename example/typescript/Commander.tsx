@@ -47,6 +47,7 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
             path = (await resPath.json() as NormalizedPath).path
         }
         return { 
+            type: path != "root" ?  "directory" : "root",
             columns: path != "root" 
             ? [
                 { name: "Name", isSortable: true, subItem: "Erw."}, 
@@ -87,6 +88,6 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
         }
     }
          
-    return <Commander theme={theme} getPathInfo={getPathInfo} getItems={getItems} />
+    return <Commander namespace={"test-commander"} theme={theme} getPathInfo={getPathInfo} getItems={getItems} />
 }
 
