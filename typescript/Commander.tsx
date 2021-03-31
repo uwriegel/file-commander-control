@@ -78,11 +78,11 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     const onPathChangedRight = (path: string) => onChange(2, path)
 
     const onColsChangedLeft = (cols: Column[])=> {
-        localStorage.setItem(`${namespace}-${pathInfoLeft.current?.type}-left-columnWiths`, JSON.stringify(pathInfoLeft.current?.columns.map(n => n.width)))
+        localStorage.setItem(`${namespace}-${pathInfoLeft.current?.type}-left-columnWiths`, JSON.stringify(cols.map(n => n.width)))
         setColumnsLeft(cols)
     }
     const onColsChangedRight = (cols: Column[])=> {
-        localStorage.setItem(`${namespace}-${pathInfoRight.current?.type}-right-columnWiths`, JSON.stringify(pathInfoRight.current?.columns.map(n => n.width)))
+        localStorage.setItem(`${namespace}-${pathInfoRight.current?.type}-right-columnWiths`, JSON.stringify(cols.map(n => n.width)))
         setColumnsRight(cols)
     }
     const onSortLeft = ()=> {}
@@ -157,7 +157,6 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     )
 }
 
-// TODO Column withs saving
 // TODO Directory and Files
 // TODO Icons
 // TODO ParentItem
