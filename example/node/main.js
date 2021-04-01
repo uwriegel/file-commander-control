@@ -18,8 +18,14 @@ app.get('/getFiles', async (req, res) => {
     res.json(files)
 })
 
+app.get('/geticon', async (req, res) => {
+    const iconPath = await addon.getIcon(req.query["ext"])
+    res.download(iconPath)
+})
+
 app.get('/normalize', async (req, res) => {
     const normalizedPath = ioPath.normalize(req.query["path"])
+    res.setHeader("content_type", "image/png")
     res.json({path: normalizedPath})
 })
 

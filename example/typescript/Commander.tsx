@@ -34,7 +34,10 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
     const itemRendererFiles = (item: TableItem) => {
         const tableItem = item as FileItem
         return [
-            <td key={1}>{tableItem.name}</td>,
+            <td key={1}>
+                <img src="http://localhost:3333/geticon?ext=."></img>
+                <span>{tableItem.name}</span>
+            </td>,
             <td key={2}>{tableItem.time}</td>,
             <td key={3}>{tableItem.size}</td>	
 	    ]
