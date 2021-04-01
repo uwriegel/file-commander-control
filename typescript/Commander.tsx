@@ -157,10 +157,11 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     )
 }
 
-// TODO Icons: not found 404 -> default file
-// TODO Icons: directory -> directory svg
-// TODO Icons: styling
-// TODO Directory and Files
+// TODO Directory and Files sorting
+// TODO Directory svg
+// TODO file svg
+// TODO Icons: not found 404 -> default file:
+        // svg default file -> on top img, alt = 0px img
 // TODO enter to change path
 // TODO ParentItem
 // TODO Sorting

@@ -26,3 +26,15 @@ body {
 	display: flex;
 	flex-direction: column;
 }
+.svg {
+    width: 16px;
+    height: 16px;
+	vertical-align: bottom;
+    margin-right: 3px;	
+}
+.svg>.path {
+	fill: var(--tablereact-main-color);
+}
+.tableItemReactIsSelected .svg>.path {
+	fill: var(--tablereact-is-selected-color);
+}
