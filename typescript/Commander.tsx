@@ -157,7 +157,6 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     )
 }
 
-// TODO file svg
 // TODO Icons: not found 404 -> default file:
         // svg default file -> on top img, alt = 0px img
 // TODO enter to change path
