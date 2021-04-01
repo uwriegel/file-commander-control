@@ -8,9 +8,11 @@
     "start": "tsc -p typescript && node ../node_modules/react-scripts/bin/react-scripts.js start"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.168",
     "file-commander-control": "file:..",
     "filesystem-utilities": "^2.0.1",
     "grid-splitter-react": "file:../node_modules/grid-splitter-react",
+    "lodash": "^4.17.21",
     "react": "file:../node_modules/react",
     "react-dom": "file:../node_modules/react-dom",
     "react-scripts": "file:../node_modules/react-scripts"
