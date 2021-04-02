@@ -1,4 +1,4 @@
-import React, { useRef } from 'react'
+import React, { useEffect, useRef, useState } from 'react'
 import _ from 'lodash'
 import { Commander, Column, PathInfo, FolderTableItem, TableItem  } from 'file-commander-control'
 
@@ -24,10 +24,14 @@ type NormalizedPath = {
 }
 
 type CommanderProps = {
-    theme: string
+    theme: string,
+    showHidden: boolean
 }
 
-export const CommanderContainer = ({theme}: CommanderProps) => {
+export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
+
+    const [refreshLeft, doRefreshLeft] = useState(false)
+    const [refreshRight, doRefreshRight] = useState(false)
 
     const notFoundImgExts = useRef(new Set<string>())
 
@@ -131,11 +135,20 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
             return await res.json() as DriveItem[]
         } else {
             const res = await fetch(`http://localhost:3333/getFiles?path=${pathInfo.path}`)
-            const items = await res.json() as FileItem[]
+            let items = await res.json() as FileItem[]
+            if (!showHidden)
+                items = items.filter(n => !n.isHidden)
             return _.orderBy(items, ['isDirectory', 'name'], ['desc', 'asc'])
         }
     }
+
+    useEffect(() => {
+        doRefreshLeft(!refreshLeft)
+        doRefreshRight(!refreshRight)
+    }, [showHidden])
          
-    return <Commander namespace={"test-commander"} theme={theme} getPathInfo={getPathInfo} getItems={getItems} />
+    return <Commander namespace={"test-commander"} 
+            theme={theme} getPathInfo={getPathInfo} getItems={getItems}
+            refreshLeft={refreshLeft} refreshRight={refreshRight} />
 }
 

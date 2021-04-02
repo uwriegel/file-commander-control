@@ -15,9 +15,13 @@ type CommanderProps = {
     theme: string,
     getPathInfo: (path: string | null)=>Promise<PathInfo>
     getItems: (pathInfo: PathInfo)=>Promise<FolderTableItem[]>,
+    refreshLeft: boolean,
+    refreshRight: boolean
 }
 
-export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderProps) => {
+export const Commander = ({
+        namespace, theme, getPathInfo, getItems, refreshLeft, refreshRight
+    }: CommanderProps) => {
 // ============================== States =======================================
 
     const [focusedLeft, setFocusedLeft] = useState(false)
@@ -99,6 +103,13 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     }
 
     useEffect(() => {
+        onChange(1, pathInfoLeft.current?.path!)
+    }, [refreshLeft])
+    useEffect(() => {
+        onChange(2, pathInfoRight.current?.path!)
+    }, [refreshRight])
+    
+    useEffect(() => {
         const initialize = async () => {
             await onChange (1, null)
             await onChange (2, null)
@@ -157,7 +168,6 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     )
 }
 
-// TODO showHidden
 // TODO render size
 // TODO render date
 // TODO enter to change path
@@ -167,7 +177,7 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
 // TODO TAB to change Focus
 // TODO ExifDate
 
-// TODO Status with item and # items/# of selected items
+// TODO Status only in app! with item and # items/# of selected items 
 
 // TODO F3 viewer
 

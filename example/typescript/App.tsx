@@ -49,6 +49,10 @@ const App = () => {
         changeTheme("adwaita")
     }, [])
 
+    const [showHidden, setShowHidden] = useState(false)
+    const onShowHiddenChanged = (evt: React.ChangeEvent<HTMLInputElement>) => 
+        setShowHidden(evt.target.checked)
+
     return (	
 		<div>
 			<div>
@@ -64,9 +68,11 @@ const App = () => {
                     <option>Yaru</option>
                     <option>Yaru dark</option>
 				</select>
+                <input type="checkbox" name="showHidden" id="showHidden" onChange={onShowHiddenChanged} />
+                <label htmlFor="showHidden" >Show hidden</label>
 			</div>
 			{appChoice == 0 
-				? <CommanderContainer theme={theme} /> 
+				? <CommanderContainer theme={theme} showHidden={showHidden}/> 
 				: appChoice == 1 
                     ? <FolderTest theme={theme} />
                     : <CommanderTest theme={theme} />
