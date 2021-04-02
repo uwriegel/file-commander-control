@@ -91,6 +91,7 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
 
     const onChange = async (folderId: 1|2, path: string | null) => {
         const pathInfo = await getPathInfo(path)
+        setItems (folderId) (setFolderItems({ items: []}))
         setPathInfo (folderId) (pathInfo)
         const folderItems = await getItems(pathInfo)
         setItems (folderId) (setFolderItems({ items: folderItems}))
