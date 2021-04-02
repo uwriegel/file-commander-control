@@ -157,7 +157,6 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     )
 }
 
-// TODO size right aligned
 // TODO render hidden
 // TODO showHidden
 // TODO render size

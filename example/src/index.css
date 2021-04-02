@@ -51,3 +51,7 @@ body {
 .defaultImg .image {
 	display: none;
 }
+.rightAligned {
+	padding-right: 3px;
+	text-align: right;
+}

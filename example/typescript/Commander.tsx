@@ -42,7 +42,7 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
             </td>,
             <td key={2}>{tableItem.description}</td>,
             <td key={3}>{tableItem.mountPoint}</td>,
-            <td key={4}>{tableItem.size}</td>,
+            <td key={4} className='rightAligned'>{tableItem.size}</td>,
             <td key={5}>{tableItem.driveType}</td>,
 	    ]
     }
@@ -94,7 +94,7 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
                 <span>{tableItem.name}</span>
             </td>,
             <td key={2}>{tableItem.time}</td>,
-            <td key={3}>{tableItem.size}</td>	
+            <td key={3} className='rightAligned'>{tableItem.size}</td>	
 	    ]
     }
 
