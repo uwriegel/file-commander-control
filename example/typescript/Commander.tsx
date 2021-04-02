@@ -16,6 +16,7 @@ type FileItem = {
     time: Date,
     size: number,
     isDirectory: boolean
+    isHidden: boolean
 }
 
 type NormalizedPath = {
@@ -77,7 +78,7 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
         const tableItem = item as FileItem
         const ext = getExtension(tableItem.name)
         return [
-            <td key={1}>
+            <td key={1} className={tableItem.isHidden ? "hidden" : ""}>
                 { 
                 tableItem.isDirectory ?
                     <svg className="svg" viewBox="0 0 1600 1600">
@@ -93,8 +94,8 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
                 }
                 <span>{tableItem.name}</span>
             </td>,
-            <td key={2}>{tableItem.time}</td>,
-            <td key={3} className='rightAligned'>{tableItem.size}</td>	
+            <td key={2} className={tableItem.isHidden ? "hidden" : ""}>{tableItem.time}</td>,
+            <td key={3} className={tableItem.isHidden ? "hidden rightAligned" : "rightAligned"}>{tableItem.size}</td>	
 	    ]
     }
 
@@ -128,12 +129,10 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
         if (pathInfo.path == "root") {
             const res = await fetch(`http://localhost:3333/root`)
             return await res.json() as DriveItem[]
-            // type: 1
         } else {
             const res = await fetch(`http://localhost:3333/getFiles?path=${pathInfo.path}`)
             const items = await res.json() as FileItem[]
             return _.orderBy(items, ['isDirectory', 'name'], ['desc', 'asc'])
-            // isHidden: false
         }
     }
          

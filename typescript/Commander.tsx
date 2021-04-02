@@ -157,7 +157,6 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     )
 }
 
-// TODO render hidden
 // TODO showHidden
 // TODO render size
 // TODO render date
@@ -166,6 +165,7 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
 // TODO Sorting
 // TODO changePath when editing path field to the same value
 // TODO TAB to change Focus
+// TODO ExifDate
 
 // TODO Status with item and # items/# of selected items
 
