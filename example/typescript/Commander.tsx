@@ -5,7 +5,10 @@ import { Commander, Column, PathInfo, FolderTableItem, TableItem  } from 'file-c
 type DriveItem = {
     name: string,
     description: string,
-    driveType: string
+    driveType: string,
+    mountPoint: string,
+    size: number,
+    type: number
 }
 
 type FileItem = {
@@ -38,7 +41,9 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
                 <span>{tableItem.name}</span>
             </td>,
             <td key={2}>{tableItem.description}</td>,
-            <td key={3}>{tableItem.driveType}</td>	
+            <td key={3}>{tableItem.mountPoint}</td>,
+            <td key={4}>{tableItem.size}</td>,
+            <td key={5}>{tableItem.driveType}</td>,
 	    ]
     }
 
@@ -108,10 +113,11 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
                 { name: "Größe", isSortable: true }
             ] as Column[]
             : [
-                { name: "Beschreibung" }, 
                 { name: "Name" }, 
+                { name: "Beschreibung" }, 
                 { name: "Mountpoint" }, 
                 { name: "Größe" }, 
+                { name: "Typ" } 
             ] as Column[],
             itemRenderer: path != "root" ? itemRendererFiles : itemRendererRoot,
             path 
@@ -122,24 +128,12 @@ export const CommanderContainer = ({theme}: CommanderProps) => {
         if (pathInfo.path == "root") {
             const res = await fetch(`http://localhost:3333/root`)
             return await res.json() as DriveItem[]
-                
-            
-            // description: "sdc1"
-            // driveType: "vfat"
-            // mountPoint: "/boot/efi"
-            // name: "/boot/efi"
-            // size: 649068544
             // type: 1
         } else {
             const res = await fetch(`http://localhost:3333/getFiles?path=${pathInfo.path}`)
             const items = await res.json() as FileItem[]
             return _.orderBy(items, ['isDirectory', 'name'], ['desc', 'asc'])
-            
-            // isDirectory: true
             // isHidden: false
-            // name: "Bücher"
-            // size: 4096
-            // time: "2021-02-19T17:43:56.000Z"            
         }
     }
          

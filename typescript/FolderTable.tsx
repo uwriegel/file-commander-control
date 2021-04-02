@@ -81,7 +81,6 @@ export const FolderTable = ({
         const evt = sevt.nativeEvent
         if (evt.which == 8) { // backspace
             if (originalItems.current) {
-                console.log("backspace")
                 const newRestrictValue = restrictValue.substr(0, restrictValue.length - 1)
                 if (newRestrictValue.length == 0) 
                     restrictClose()            
