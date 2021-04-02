@@ -32,9 +32,22 @@ body {
 	vertical-align: bottom;
     margin-right: 3px;	
 }
-.svg>.path {
+.image {
+	vertical-align: bottom;
+    margin-right: 3px;	
+}
+.svgFile {
+	display: none;
+}
+.svg>.svgPath {
 	fill: var(--tablereact-main-color);
 }
-.tableItemReactIsSelected .svg>.path {
+.tableItemReactIsSelected .svg>.svgPath {
 	fill: var(--tablereact-is-selected-color);
+}
+.defaultImg .svgFile {
+	display: initial
+}
+.defaultImg .image {
+	display: none;
 }

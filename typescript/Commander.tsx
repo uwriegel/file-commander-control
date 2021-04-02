@@ -42,7 +42,6 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     const getColumnsWithWidths = (type: string, folder: string, columns: Column[]) => {
         const cached = localStorage.getItem(`${namespace}-${type}-${folder}-columnWiths`)        
         const widths = cached ? JSON.parse(cached) as number[] : null
-        console.log("Weiten", widths)
         return widths 
             ? columns.map((n, i) => ({
                 columnsSort: n.columnsSort,
@@ -157,8 +156,6 @@ export const Commander = ({namespace, theme, getPathInfo, getItems}: CommanderPr
     )
 }
 
-// TODO Icons: not found 404 -> default file:
-        // svg default file -> on top img, alt = 0px img
 // TODO enter to change path
 // TODO ParentItem
 // TODO Sorting
