@@ -168,8 +168,6 @@ export const Commander = ({
     )
 }
 
-// TODO render size
-// TODO render date
 // TODO enter to change path
 // TODO ParentItem
 // TODO Sorting

@@ -13,7 +13,7 @@ type DriveItem = {
 
 type FileItem = {
     name: string,
-    time: Date,
+    time: string,
     size: number,
     isDirectory: boolean
     isHidden: boolean
@@ -26,6 +26,25 @@ type NormalizedPath = {
 type CommanderProps = {
     theme: string,
     showHidden: boolean
+}
+
+const dateFormat = Intl.DateTimeFormat("de-DE", {
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+})
+
+const timeFormat = Intl.DateTimeFormat("de-DE", {
+    hour: "2-digit",
+    minute: "2-digit"
+})
+
+const getDateTime = (dateString: string) => {
+    if (!dateString)
+        return ''
+
+    const date = new Date(dateString)
+    return dateFormat.format(date) + " " + timeFormat.format(date)  
 }
 
 export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
@@ -47,7 +66,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             </td>,
             <td key={2}>{tableItem.description}</td>,
             <td key={3}>{tableItem.mountPoint}</td>,
-            <td key={4} className='rightAligned'>{tableItem.size}</td>,
+            <td key={4} className='rightAligned'>{getSize(tableItem.size)}</td>,
             <td key={5}>{tableItem.driveType}</td>,
 	    ]
     }
@@ -98,10 +117,26 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
                 }
                 <span>{tableItem.name}</span>
             </td>,
-            <td key={2} className={tableItem.isHidden ? "hidden" : ""}>{tableItem.time}</td>,
-            <td key={3} className={tableItem.isHidden ? "hidden rightAligned" : "rightAligned"}>{tableItem.size}</td>	
+            <td key={2} className={tableItem.isHidden ? "hidden" : ""}>{getDateTime(tableItem.time)}</td>,
+            <td key={3} className={tableItem.isHidden ? "hidden rightAligned" : "rightAligned"}>{getSize(tableItem.size)}</td>	
 	    ]
     }
+
+    const getSize = (size: number) => {
+        let strNumber = `${size}`
+        const thSep = '.'
+        if (strNumber.length > 3) {
+            var begriff = strNumber
+            strNumber = ""
+            for (var j = 3; j < begriff.length; j += 3) {
+                var extract = begriff.slice(begriff.length - j, begriff.length - j + 3)
+                strNumber = thSep + extract + strNumber
+            }
+            var strfirst = begriff.substr(0, (begriff.length % 3 == 0) ? 3 : (begriff.length % 3))
+            strNumber = strfirst + strNumber
+        }
+        return strNumber
+    }        
 
     const getPathInfo = async (path: string | null) => {
         path = path ? path : "root"
