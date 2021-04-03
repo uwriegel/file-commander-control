@@ -152,7 +152,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
     }        
 
     const getPathInfo = async (path: string | null, newSubPath?: string) => {
-        console.log(path, newSubPath)
+        const oldPath = path
         path = path && (path != "/" || newSubPath != "..") ? path : "root"
         console.log(path)
         if (path != "root" || (newSubPath && newSubPath != "..")) {
@@ -161,7 +161,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             const resPath = await fetch(`http://localhost:3333/normalize?path=${path}`)
             path = (await resPath.json() as NormalizedPath).path
         }
-        return { 
+        const pathInfo = { 
             type: path != "root" ?  "directory" : "root",
             columns: path != "root" 
             ? [
@@ -178,19 +178,21 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             ] as Column[],
             itemRenderer: path != "root" ? itemRendererFiles : itemRendererRoot,
             path 
-        }
+        } 
+        return [pathInfo, newSubPath == ".." ? _.last(_.split(oldPath, '/')) : undefined] as [PathInfo, string?]
     }
 
-    const getItems = async (pathInfo: PathInfo) => {
+    const getItems = async (pathInfo: PathInfo, folderToSelect?: string) => {
+
         if (pathInfo.path == "root") {
             const res = await fetch(`http://localhost:3333/root`)
             const items =  await res.json() as DriveItem[]
-            return items.map(n => {
+            return [items.map(n => {
                 n.isDirectory = true
                 n.subPath = n.mountPoint
                 n.isNotSelectable = true
                 return n
-            })
+            }), 0] as [FolderTableItem[], number]
         } else {
             const makeFileItem = (n: FileItem) => {
                 n.subPath = n.name 
@@ -209,7 +211,9 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             
             if (!showHidden)
                 items = items.filter(n => !n.isHidden)
-            return [parentItem, ..._.orderBy(items.map(makeFileItem), ['isDirectory', 'name'], ['desc', 'asc'])]
+            const result = [parentItem, ..._.orderBy(items.map(makeFileItem), ['isDirectory', 'name'], ['desc', 'asc'])]
+            const selectedIndex = folderToSelect ? result.findIndex(n => n.name == folderToSelect) : 0
+            return [result, selectedIndex] as [FolderTableItem[], number]
         }
     }
 

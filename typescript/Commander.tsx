@@ -13,8 +13,8 @@ export type PathInfo = {
 type CommanderProps = {
     namespace: string,
     theme: string,
-    getPathInfo: (path: string | null, newSubPath: string | undefined)=>Promise<PathInfo>
-    getItems: (pathInfo: PathInfo)=>Promise<FolderTableItem[]>,
+    getPathInfo: (path: string | null, newSubPath: string | undefined)=>Promise<[PathInfo, string?]>
+    getItems: (pathInfo: PathInfo, folderToSelect?: string)=>Promise<[FolderTableItem[], number]>,
     refreshLeft: boolean,
     refreshRight: boolean
 }
@@ -97,11 +97,11 @@ export const Commander = ({
 // ============================== States =======================================
 
     const onChange = async (folderId: 1|2, path: string | null, newSubPath?: string) => {
-        const pathInfo = await getPathInfo(path, newSubPath)
+        const [pathInfo, folderToSelect] = await getPathInfo(path, newSubPath)
         setItems (folderId) (setFolderItems({ items: []}))
         setPathInfo (folderId) (pathInfo)
-        const folderItems = await getItems(pathInfo)
-        setItems (folderId) (setFolderItems({ items: folderItems}))
+        const [folderItems, indexToSelect] = await getItems(pathInfo, folderToSelect)
+        setItems (folderId) (setFolderItems({ items: folderItems, currentIndex: indexToSelect}))
         setFocus (folderId)
     }
 
@@ -172,7 +172,6 @@ export const Commander = ({
     )
 }
 
-// TODO ParentItem: select last folder
 // TODO Sorting
 // TODO ExifDate
 // TODO Exif info in another style
