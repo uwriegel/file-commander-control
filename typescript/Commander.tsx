@@ -172,7 +172,6 @@ export const Commander = ({
     )
 }
 
-// TODO parent item not selectable: isSelectable property per folder item
 // TODO ParentItem: select last folder
 // TODO Sorting
 // TODO ExifDate

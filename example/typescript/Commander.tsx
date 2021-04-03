@@ -10,8 +10,8 @@ type DriveItem = {
     size: number,
     type: number,
     isDirectory: boolean,
-    subPath: string
-
+    subPath: string,
+    isNotSelectable: boolean
 }
 
 type FileItem = {
@@ -21,7 +21,8 @@ type FileItem = {
     isDirectory: boolean
     isParent: boolean
     isHidden: boolean,
-    subPath: string
+    subPath: string,
+    isNotSelectable: boolean
 }
 
 type NormalizedPath = {
@@ -187,6 +188,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             return items.map(n => {
                 n.isDirectory = true
                 n.subPath = n.mountPoint
+                n.isNotSelectable = true
                 return n
             })
         } else {
@@ -201,7 +203,8 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
                 name: "..",
                 isDirectory: true,
                 isParent: true,
-                subPath: ".."
+                subPath: "..",
+                isNotSelectable: true
             }
             
             if (!showHidden)

@@ -11,6 +11,7 @@ import restrictTransition from './transition.restrict.module.css'
 export interface FolderTableItem extends TableItem {
     subPath: string
     isDirectory: boolean
+    isNotSelectable?: boolean
 }
 
 export interface FolderTableItems extends TableItems {
@@ -103,24 +104,24 @@ export const FolderTable = ({
             return true
         }
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
-            displayItems.items.forEach((item, i) => item.isSelected = i >= (items.currentIndex ?? 0)) 
+            displayItems.items.forEach((item, i) => item.isSelected = !item.isNotSelectable && i >= (items.currentIndex ?? 0)) 
             onItemsChanged(folderItemsChanged(items))
             return true
         }
         if (evt.which == 36 && evt.shiftKey) { // Shift + home
-            displayItems.items.forEach((item, i) => item.isSelected = i <= (items.currentIndex ?? 0)) 
+            displayItems.items.forEach((item, i) => item.isSelected = !item.isNotSelectable && i <= (items.currentIndex ?? 0)) 
             onItemsChanged(folderItemsChanged(items))
             return true
         }
         if (evt.which == 45) { // Ins
             const item = displayItems.items[items.currentIndex ?? 0]
-            item.isSelected = !item.isSelected
+            item.isSelected = !item.isNotSelectable && !item.isSelected
             items.currentIndex = (items.currentIndex ?? 0) + 1
             onItemsChanged(folderItemsChanged(items))
             return true
         }
         if (evt.which == 107) { // Numlock +
-            displayItems.items.forEach(item => item.isSelected = true)
+            displayItems.items.forEach(item => item.isSelected = !item.isNotSelectable)
             onItemsChanged(folderItemsChanged(items))
             return true
         }
