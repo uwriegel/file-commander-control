@@ -172,14 +172,14 @@ export const Commander = ({
     )
 }
 
-// TODO ParentItem
+// TODO parent item not selectable: isSelectable property per folder item
+// TODO ParentItem: select last folder
 // TODO Sorting
-// TODO TAB to change Focus
 // TODO ExifDate
 // TODO Exif info in another style
+// TODO TAB to change Focus
 
 // TODO Status only in app! with item and # items/# of selected items 
 
 // TODO F3 viewer
 
-// TODO parent item not selectable: isSelectable property per folder item

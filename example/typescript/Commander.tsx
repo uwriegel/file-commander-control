@@ -19,6 +19,7 @@ type FileItem = {
     time: string,
     size: number,
     isDirectory: boolean
+    isParent: boolean
     isHidden: boolean,
     subPath: string
 }
@@ -108,9 +109,14 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             <td key={1} className={tableItem.isHidden ? "hidden" : ""}>
                 { 
                 tableItem.isDirectory ?
-                    <svg className="svg" viewBox="0 0 1600 1600">
-                        <path className="svgPath" d="M 233.82369,1371.7235 C 142.86653,1363.9041 76.893745,1273.6489 88.471385,1186.1738 88.725189,878.60148 86.478209,570.93784 90.1772,263.42085 103.1198,176.20618 192.96815,117.12319 279.57048,127.95809 c 94.86457,2.08486 190.64811,-5.67983 284.97182,4.30185 72.81507,15.81931 127.5668,84.58276 127.55779,157.93224 226.79955,0.66551 453.79181,-0.60344 680.47101,1.27009 89.0887,10.85174 153.416,98.45583 141.9829,185.1704 0.601,249.12184 1.1249,498.2542 -0.4428,747.37123 -5.107,90.6798 -96.2513,159.9695 -186.2129,148.1059 -364.68965,0.5778 -729.38836,1.0611 -1094.07461,-0.3863 z M 1361.5894,1263.2986 c 44.4976,-8.42 46.5224,-54.0812 43.4627,-88.8588 -0.7473,-245.14763 1.8126,-490.38804 -1.661,-735.46491 -10.2423,-42.2289 -54.8891,-42.78353 -89.3332,-40.24177 -357.21072,0 -714.42148,0 -1071.63223,0 -65.54009,18.1395 -38.72153,96.98298 -44.67661,145.98103 -0.071,225.23903 0.21972,450.47812 0.30847,675.71715 26.96503,71.7946 119.03872,34.6939 178.20156,44.0088 328.4356,-0.426 656.92461,1.5407 985.33031,-1.1415 z" />
-                    </svg>                
+                    tableItem.isParent ?
+                      <svg className="svg" viewBox="0 0 24 24">
+                            <path className="svgPath" d="M4 12l1.41 1.41L11 7.83V20h2V7.83l5.58 5.59L20 12l-8-8-8 8z"/>
+                        </svg>
+                    :
+                        <svg className="svg" viewBox="0 0 1600 1600">
+                            <path className="svgPath" d="M 233.82369,1371.7235 C 142.86653,1363.9041 76.893745,1273.6489 88.471385,1186.1738 88.725189,878.60148 86.478209,570.93784 90.1772,263.42085 103.1198,176.20618 192.96815,117.12319 279.57048,127.95809 c 94.86457,2.08486 190.64811,-5.67983 284.97182,4.30185 72.81507,15.81931 127.5668,84.58276 127.55779,157.93224 226.79955,0.66551 453.79181,-0.60344 680.47101,1.27009 89.0887,10.85174 153.416,98.45583 141.9829,185.1704 0.601,249.12184 1.1249,498.2542 -0.4428,747.37123 -5.107,90.6798 -96.2513,159.9695 -186.2129,148.1059 -364.68965,0.5778 -729.38836,1.0611 -1094.07461,-0.3863 z M 1361.5894,1263.2986 c 44.4976,-8.42 46.5224,-54.0812 43.4627,-88.8588 -0.7473,-245.14763 1.8126,-490.38804 -1.661,-735.46491 -10.2423,-42.2289 -54.8891,-42.78353 -89.3332,-40.24177 -357.21072,0 -714.42148,0 -1071.63223,0 -65.54009,18.1395 -38.72153,96.98298 -44.67661,145.98103 -0.071,225.23903 0.21972,450.47812 0.30847,675.71715 26.96503,71.7946 119.03872,34.6939 178.20156,44.0088 328.4356,-0.426 656.92461,1.5407 985.33031,-1.1415 z" />
+                        </svg>                
                 :
                     <span className={isDefaultImg(ext)}>
                         <svg className="svg svgFile" viewBox="0 0 24 24">
@@ -127,6 +133,8 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
     }
 
     const getSize = (size: number) => {
+        if (!size)
+            return ""
         let strNumber = `${size}`
         const thSep = '.'
         if (strNumber.length > 3) {
@@ -143,9 +151,10 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
     }        
 
     const getPathInfo = async (path: string | null, newSubPath?: string) => {
-        console.log("getPathInfo", path, newSubPath)
-        path = path ? path : "root"
-        if (path != "root" || newSubPath) {
+        console.log(path, newSubPath)
+        path = path && (path != "/" || newSubPath != "..") ? path : "root"
+        console.log(path)
+        if (path != "root" || (newSubPath && newSubPath != "..")) {
             path = path.startsWith("/") && newSubPath ? path + '/' + newSubPath! : path
             path = path == "root" ? newSubPath! : path
             const resPath = await fetch(`http://localhost:3333/normalize?path=${path}`)
@@ -188,9 +197,16 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
 
             const res = await fetch(`http://localhost:3333/getFiles?path=${pathInfo.path}`)
             let items = await res.json() as FileItem[]
+            const parentItem = {
+                name: "..",
+                isDirectory: true,
+                isParent: true,
+                subPath: ".."
+            }
+            
             if (!showHidden)
                 items = items.filter(n => !n.isHidden)
-            return _.orderBy(items.map(makeFileItem), ['isDirectory', 'name'], ['desc', 'asc'])
+            return [parentItem, ..._.orderBy(items.map(makeFileItem), ['isDirectory', 'name'], ['desc', 'asc'])]
         }
     }
 
