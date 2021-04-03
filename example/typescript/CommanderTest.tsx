@@ -66,7 +66,7 @@ export const CommanderTest = ({theme}: CommanderTestProps) => {
 
     const onChange = (folderId: 1|2) => {
         setPath (folderId) ("/home/uwe/documents")
-        const folderItems = Array.from(Array(6000).keys()).map(index => ({ name: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
+        const folderItems = Array.from(Array(6000).keys()).map(index => ({ subPath: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
         setItems (folderId) (setFolderItems({ items: folderItems}))
     }
 
@@ -88,7 +88,7 @@ export const CommanderTest = ({theme}: CommanderTestProps) => {
     const itemRenderer = (item: TableItem) => {
         const tableItem = item as FolderItem
         return [
-            <td key={1}>{tableItem.name}</td>,
+            <td key={1}>{tableItem.subPath}</td>,
             <td key={2}>{tableItem.col2}</td>,
             <td key={3}>{tableItem.col3}</td>	
 	    ]

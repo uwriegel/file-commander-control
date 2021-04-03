@@ -8,7 +8,10 @@ type DriveItem = {
     driveType: string,
     mountPoint: string,
     size: number,
-    type: number
+    type: number,
+    isDirectory: boolean,
+    subPath: string
+
 }
 
 type FileItem = {
@@ -16,7 +19,8 @@ type FileItem = {
     time: string,
     size: number,
     isDirectory: boolean
-    isHidden: boolean
+    isHidden: boolean,
+    subPath: string
 }
 
 type NormalizedPath = {
@@ -138,9 +142,12 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
         return strNumber
     }        
 
-    const getPathInfo = async (path: string | null) => {
+    const getPathInfo = async (path: string | null, newSubPath?: string) => {
+        console.log("getPathInfo", path, newSubPath)
         path = path ? path : "root"
-        if (path != "root") {
+        if (path != "root" || newSubPath) {
+            path = path.startsWith("/") && newSubPath ? path + '/' + newSubPath! : path
+            path = path == "root" ? newSubPath! : path
             const resPath = await fetch(`http://localhost:3333/normalize?path=${path}`)
             path = (await resPath.json() as NormalizedPath).path
         }
@@ -167,13 +174,23 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
     const getItems = async (pathInfo: PathInfo) => {
         if (pathInfo.path == "root") {
             const res = await fetch(`http://localhost:3333/root`)
-            return await res.json() as DriveItem[]
+            const items =  await res.json() as DriveItem[]
+            return items.map(n => {
+                n.isDirectory = true
+                n.subPath = n.mountPoint
+                return n
+            })
         } else {
+            const makeFileItem = (n: FileItem) => {
+                n.subPath = n.name 
+                return n
+            }
+
             const res = await fetch(`http://localhost:3333/getFiles?path=${pathInfo.path}`)
             let items = await res.json() as FileItem[]
             if (!showHidden)
                 items = items.filter(n => !n.isHidden)
-            return _.orderBy(items, ['isDirectory', 'name'], ['desc', 'asc'])
+            return _.orderBy(items.map(makeFileItem), ['isDirectory', 'name'], ['desc', 'asc'])
         }
     }
 

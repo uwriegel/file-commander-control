@@ -9,7 +9,8 @@ import styles from './styles.module.css'
 import restrictTransition from './transition.restrict.module.css'
 
 export interface FolderTableItem extends TableItem {
-    name: string
+    subPath: string
+    isDirectory: boolean
 }
 
 export interface FolderTableItems extends TableItems {
@@ -69,9 +70,7 @@ export const FolderTable = ({
         const selectedItems = displayItems.items.filter(n => n.isSelected)
         return selectedItems.length > 0 
             ? selectedItems 
-            : displayItems.currentIndex
-                ? [ displayItems.items[displayItems.currentIndex] ]
-                : []
+            : [ displayItems.items[displayItems.currentIndex || 0] ]
     }
 
     const pathInput = useRef<HTMLInputElement>(null)        
@@ -159,7 +158,7 @@ export const FolderTable = ({
 
     const restrictTo = (newValue: string) => {
         const itemsToSearch = originalItems.current || displayItems
-        const filteredItems = itemsToSearch.items.filter(n => n.name.toLocaleLowerCase().startsWith(newValue))
+        const filteredItems = itemsToSearch.items.filter(n => n.subPath.toLocaleLowerCase().startsWith(newValue))
         if (filteredItems.length) {
             setRestrictValue(newValue)
             if (restrictValue.length == 0)  

@@ -13,7 +13,7 @@ export type PathInfo = {
 type CommanderProps = {
     namespace: string,
     theme: string,
-    getPathInfo: (path: string | null)=>Promise<PathInfo>
+    getPathInfo: (path: string | null, newSubPath: string | undefined)=>Promise<PathInfo>
     getItems: (pathInfo: PathInfo)=>Promise<FolderTableItem[]>,
     refreshLeft: boolean,
     refreshRight: boolean
@@ -43,6 +43,20 @@ export const Commander = ({
     const [pathRight, setPathRight] = useState("")
     const pathInfoLeft = useRef<PathInfo>()
     const pathInfoRight = useRef<PathInfo>()
+    const getPath = (folderId: 1|2) => folderId == 1 ? pathLeft : pathRight
+
+    const setPathInfoLeft = (pathInfo: PathInfo) => {
+        pathInfoLeft.current = pathInfo
+        setPathLeft(pathInfo.path)
+        setColumnsLeft(getColumnsWithWidths(pathInfo.type, "left", pathInfo.columns))
+    }
+    const setPathInfoRight = (pathInfo: PathInfo) => {
+        pathInfoRight.current = pathInfo
+        setPathRight(pathInfo.path)
+        setColumnsRight(getColumnsWithWidths(pathInfo.type, "right", pathInfo.columns))
+    }
+    const setPathInfo = (folderId: 1|2) => folderId == 1 ? setPathInfoLeft : setPathInfoRight
+    
     const getColumnsWithWidths = (type: string, folder: string, columns: Column[]) => {
         const cached = localStorage.getItem(`${namespace}-${type}-${folder}-columnWiths`)        
         const widths = cached ? JSON.parse(cached) as number[] : null
@@ -58,17 +72,6 @@ export const Commander = ({
             : columns
     }
 
-    const setPathInfoLeft = (pathInfo: PathInfo) => {
-        pathInfoLeft.current = pathInfo
-        setPathLeft(pathInfo.path)
-        setColumnsLeft(getColumnsWithWidths(pathInfo.type, "left", pathInfo.columns))
-    }
-    const setPathInfoRight = (pathInfo: PathInfo) => {
-        pathInfoRight.current = pathInfo
-        setPathRight(pathInfo.path)
-        setColumnsRight(getColumnsWithWidths(pathInfo.type, "right", pathInfo.columns))
-    }
-    const setPathInfo = (folderId: 1|2) => folderId == 1 ? setPathInfoLeft : setPathInfoRight
     const getItemRendererLeft = () => pathInfoLeft.current ? pathInfoLeft.current.itemRenderer : (item: TableItem) => ([] as JSX.Element[])
     const getItemRendererRight = () => pathInfoRight.current ? pathInfoRight.current.itemRenderer : (item: TableItem) => ([] as JSX.Element[])
     const getItemRenderer = (folderId: 1|2) => folderId == 1 ? getItemRendererLeft() : getItemRendererRight()
@@ -93,8 +96,8 @@ export const Commander = ({
 
 // ============================== States =======================================
 
-    const onChange = async (folderId: 1|2, path: string | null) => {
-        const pathInfo = await getPathInfo(path)
+    const onChange = async (folderId: 1|2, path: string | null, newSubPath?: string) => {
+        const pathInfo = await getPathInfo(path, newSubPath)
         setItems (folderId) (setFolderItems({ items: []}))
         setPathInfo (folderId) (pathInfo)
         const folderItems = await getItems(pathInfo)
@@ -126,8 +129,9 @@ export const Commander = ({
             activeFolder.current = 2
     }, [focusedLeft, focusedRight])
 
-    const onEnter = (items: FolderTableItem[]) => {
-        console.log("Enter", items)
+    const onEnter = async (folderId: (1|2), items: FolderTableItem[]) => {
+        if (items.length == 1 && items[0].isDirectory) 
+            await onChange(folderId, getPath(folderId), items[0].subPath)
     }
 
     return (	
@@ -146,7 +150,7 @@ export const Commander = ({
                         onItemsChanged={setItemsLeft}
                         path={pathLeft}
                         onPathChanged={onPathChangedLeft}
-                        onEnter={onEnter} /> 
+                        onEnter={items => onEnter(1, items)} /> 
                 )} 
                 second={(
                     <FolderTable 
@@ -161,26 +165,21 @@ export const Commander = ({
                         onItemsChanged={setItemsRight}
                         path={pathRight}
                         onPathChanged={onPathChangedRight}
-                        onEnter={onEnter} /> 
+                        onEnter={items => onEnter(2, items)} /> 
                 )} 
             />
         </div>
     )
 }
 
-// TODO enter to change path
 // TODO ParentItem
 // TODO Sorting
-// TODO changePath when editing path field to the same value
 // TODO TAB to change Focus
 // TODO ExifDate
+// TODO Exif info in another style
 
 // TODO Status only in app! with item and # items/# of selected items 
 
 // TODO F3 viewer
 
-// TODO in hyper rename fill directory items and drive items and icons
-
-
 // TODO parent item not selectable: isSelectable property per folder item
-// TODO Exif info in another style
