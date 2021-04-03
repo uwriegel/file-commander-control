@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react'
 import _ from 'lodash'
-import { Commander, Column, PathInfo, FolderTableItem, TableItem  } from 'file-commander-control'
+import { Commander, Column, PathInfo, FolderTableItem, TableItem, FolderTableItems  } from 'file-commander-control'
 
 type DriveItem = {
     name: string,
@@ -217,6 +217,13 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
         }
     }
 
+    const sort = (items: FolderTableItems, column: number, isDescending: boolean, isSubItem?: boolean) => {
+        switch (column) {
+            case 0: 
+
+        }
+        return { items: items.items.reverse(), currentIndex: 0}
+    }
     useEffect(() => {
         doRefreshLeft(!refreshLeft)
         doRefreshRight(!refreshRight)
@@ -224,6 +231,6 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
          
     return <Commander namespace={"test-commander"} 
             theme={theme} getPathInfo={getPathInfo} getItems={getItems}
-            refreshLeft={refreshLeft} refreshRight={refreshRight} />
+            refreshLeft={refreshLeft} refreshRight={refreshRight} sort= {sort} />
 }
 

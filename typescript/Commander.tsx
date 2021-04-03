@@ -16,11 +16,12 @@ type CommanderProps = {
     getPathInfo: (path: string | null, newSubPath: string | undefined)=>Promise<[PathInfo, string?]>
     getItems: (pathInfo: PathInfo, folderToSelect?: string)=>Promise<[FolderTableItem[], number]>,
     refreshLeft: boolean,
-    refreshRight: boolean
+    refreshRight: boolean,
+    sort: (items: FolderTableItems, column: number, isDescending: boolean, isSubItem?: boolean) => FolderTableItems
 }
 
 export const Commander = ({
-        namespace, theme, getPathInfo, getItems, refreshLeft, refreshRight
+        namespace, theme, getPathInfo, getItems, refreshLeft, refreshRight, sort
     }: CommanderProps) => {
 // ============================== States =======================================
 
@@ -79,6 +80,7 @@ export const Commander = ({
     const [itemsLeft, setItemsLeft ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
     const [itemsRight, setItemsRight ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
     const setItems = (folderId: 1|2) => folderId == 1 ? setItemsLeft : setItemsRight
+    const items = (folderId: 1|2) => folderId == 1 ? itemsLeft : itemsRight
 
     const onPathChangedLeft = (path: string) =>  onChange(1, path)
     const onPathChangedRight = (path: string) => onChange(2, path)
@@ -91,9 +93,11 @@ export const Commander = ({
         localStorage.setItem(`${namespace}-${pathInfoRight.current?.type}-right-columnWiths`, JSON.stringify(cols.map(n => n.width)))
         setColumnsRight(cols)
     }
-    const onSortLeft = ()=> {}
-    const onSortRight = ()=> {}
-
+    const onSort = (folderId: 1|2, column: number, isDescending: boolean, isSubItem?: boolean) => {
+        const sortedItems = sort(items(folderId), column, isDescending, isSubItem)
+        setItems (folderId) (sortedItems)
+    }
+    
 // ============================== States =======================================
 
     const onChange = async (folderId: 1|2, path: string | null, newSubPath?: string) => {
@@ -144,7 +148,7 @@ export const Commander = ({
                         setFocused={setFocusedLeft} 
                         columns={columnsLeft} 
                         onColumnsChanged={onColsChangedLeft} 
-                        onSort={onSortLeft}
+                        onSort={(col, isDesc, isSub) => onSort(1, col, isDesc, isSub)}
                         items={itemsLeft}
                         itemRenderer={getItemRenderer (1)}
                         onItemsChanged={setItemsLeft}
@@ -159,7 +163,7 @@ export const Commander = ({
                         setFocused={setFocusedRight} 
                         columns={columnsRight} 
                         onColumnsChanged={onColsChangedRight} 
-                        onSort={onSortRight}
+                        onSort={(col, isDesc, isSub) => onSort(2, col, isDesc, isSub)}
                         items={itemsRight}
                         itemRenderer={getItemRenderer (2)}
                         onItemsChanged={setItemsRight}
