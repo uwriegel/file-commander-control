@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from 'react'
-import _ from 'lodash'
 import { Commander, Column, PathInfo, FolderTableItem, TableItem, FolderTableItems  } from 'file-commander-control'
+import compose from 'lodash/fp/compose'
+import * as Array from './Array'
 
 type DriveItem = {
     name: string,
@@ -78,12 +79,11 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
     }
 
     const getExtension = (name: string) => {
-        const parts = _.split(name, '.')
-        return parts.length > 1 
-            ? _.first(parts)
-                ? _.last(parts)!
+        name = name || ""
+        const parts = name.split('.')
+        return Array.first(parts)
+                ? Array.last(parts)
                 : "" 
-            : ""
     }
 
     const onImgNotFound = (ext:string, evt: React.SyntheticEvent<HTMLImageElement>) => {
@@ -105,7 +105,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
     
     const itemRendererFiles = (item: TableItem) => {
         const tableItem = item as FileItem
-        const ext = getExtension(tableItem.name)
+        const ext = getExtension(tableItem.name) || ""
         return [
             <td key={1} className={tableItem.isHidden ? "hidden" : ""}>
                 { 
@@ -179,7 +179,23 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             itemRenderer: path != "root" ? itemRendererFiles : itemRendererRoot,
             path 
         } 
-        return [pathInfo, newSubPath == ".." ? _.last(_.split(oldPath, '/')) : undefined] as [PathInfo, string?]
+        return [pathInfo, newSubPath == ".." ? Array.last(oldPath?.split('/')) : undefined] as [PathInfo, string?]
+    }
+
+    const sortByName = (a: FileItem, b: FileItem) => a.name.localeCompare(b.name)
+    const sortByExtension = (a: FileItem, b: FileItem) => {
+        const ae = getExtension(a.name) || ""
+        const be = getExtension(b.name) || ""
+        const res = ae.localeCompare(be)
+        return res != 0 ? res : a.name.localeCompare(b.name)
+    }
+    const sortByDate = (a: FileItem, b: FileItem) => new Date(a.time).getTime() - new Date(b.time).getTime()
+    const sortBySize = (a: FileItem, b: FileItem) => a.size - b.size
+
+    const sortItems = (items: FileItem[], sortfunc: (a: FileItem, b: FileItem)=>number) => {
+        const directories = items.filter(n => n.isDirectory).sort(sortByName)
+        const files = items.filter(n => !n.isDirectory).sort(sortfunc)
+        return [...directories, ...files]
     }
 
     const getItems = async (pathInfo: PathInfo, folderToSelect?: string) => {
@@ -197,13 +213,16 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             const makeFileItem = (n: FileItem) => {
                 n.subPath = n.name 
                 return n
-            }
+            } 
 
             const res = await fetch(`http://localhost:3333/getFiles?path=${pathInfo.path}`)
             let items = await res.json() as FileItem[]
             const parentItem = {
                 name: "..",
                 isDirectory: true,
+                time: "",
+                size: 0,
+                isHidden: false,
                 isParent: true,
                 subPath: "..",
                 isNotSelectable: true
@@ -211,18 +230,31 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             
             if (!showHidden)
                 items = items.filter(n => !n.isHidden)
-            const result = [parentItem, ..._.orderBy(items.map(makeFileItem), ['isDirectory', 'name'], ['desc', 'asc'])]
+
+            const result = sortItems([parentItem, ...items.map(makeFileItem)], sortByName)
             const selectedIndex = folderToSelect ? result.findIndex(n => n.name == folderToSelect) : 0
             return [result, selectedIndex] as [FolderTableItem[], number]
         }
     }
 
     const sort = (items: FolderTableItems, column: number, isDescending: boolean, isSubItem?: boolean) => {
+
+        let sortfunc: (a: FileItem, b: FileItem)=>number = (a, b)=>0
         switch (column) {
             case 0: 
-
+                sortfunc = 
+                    isSubItem 
+                        ? isDescending ? compose(n => -n, sortByExtension) : sortByExtension
+                        : isDescending ? compose(n => -n, sortByName) : sortByName
+                break
+            case 1: 
+                sortfunc = isDescending ? compose(n => -n, sortByDate) : sortByDate
+                break
+            case 2:
+                sortfunc = isDescending ? compose(n => -n, sortBySize) : sortBySize
+                break
         }
-        return { items: items.items.reverse(), currentIndex: 0}
+        return { items: sortItems(items.items as FileItem[], sortfunc)}
     }
     useEffect(() => {
         doRefreshLeft(!refreshLeft)

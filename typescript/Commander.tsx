@@ -85,19 +85,6 @@ export const Commander = ({
     const onPathChangedLeft = (path: string) =>  onChange(1, path)
     const onPathChangedRight = (path: string) => onChange(2, path)
 
-    const onColsChangedLeft = (cols: Column[])=> {
-        localStorage.setItem(`${namespace}-${pathInfoLeft.current?.type}-left-columnWiths`, JSON.stringify(cols.map(n => n.width)))
-        setColumnsLeft(cols)
-    }
-    const onColsChangedRight = (cols: Column[])=> {
-        localStorage.setItem(`${namespace}-${pathInfoRight.current?.type}-right-columnWiths`, JSON.stringify(cols.map(n => n.width)))
-        setColumnsRight(cols)
-    }
-    const onSort = (folderId: 1|2, column: number, isDescending: boolean, isSubItem?: boolean) => {
-        const sortedItems = sort(items(folderId), column, isDescending, isSubItem)
-        setItems (folderId) (sortedItems)
-    }
-    
 // ============================== States =======================================
 
     const onChange = async (folderId: 1|2, path: string | null, newSubPath?: string) => {
@@ -108,6 +95,33 @@ export const Commander = ({
         setItems (folderId) (setFolderItems({ items: folderItems, currentIndex: indexToSelect}))
         setFocus (folderId)
     }
+
+    const onColsChangedLeft = (cols: Column[])=> {
+        localStorage.setItem(`${namespace}-${pathInfoLeft.current?.type}-left-columnWiths`, JSON.stringify(cols.map(n => n.width)))
+        setColumnsLeft(cols)
+    }
+    const onColsChangedRight = (cols: Column[])=> {
+        localStorage.setItem(`${namespace}-${pathInfoRight.current?.type}-right-columnWiths`, JSON.stringify(cols.map(n => n.width)))
+        setColumnsRight(cols)
+    }
+    const onSort = (folderId: 1|2, column: number, isDescending: boolean, isSubItem?: boolean) => {
+        console.log("Fuck", column, isDescending, isSubItem)
+        const sortedItems = sort(items(folderId), column, isDescending, isSubItem)
+        setItems (folderId) (sortedItems)
+    }
+
+    const onEnter = async (folderId: (1|2), items: FolderTableItem[]) => {
+        if (items.length == 1 && items[0].isDirectory) 
+            await onChange(folderId, getPath(folderId), items[0].subPath)
+    }
+
+    const activeFolder = useRef<1|2>(1)
+    useLayoutEffect(() => {
+        if (focusedLeft)
+            activeFolder.current = 1
+        else if (focusedRight)
+            activeFolder.current = 2
+    }, [focusedLeft, focusedRight])
 
     useEffect(() => {
         onChange(1, pathInfoLeft.current?.path!)
@@ -124,19 +138,6 @@ export const Commander = ({
         }
         initialize()
     }, [])
-
-    const activeFolder = useRef<1|2>(1)
-    useLayoutEffect(() => {
-        if (focusedLeft)
-            activeFolder.current = 1
-        else if (focusedRight)
-            activeFolder.current = 2
-    }, [focusedLeft, focusedRight])
-
-    const onEnter = async (folderId: (1|2), items: FolderTableItem[]) => {
-        if (items.length == 1 && items[0].isDirectory) 
-            await onChange(folderId, getPath(folderId), items[0].subPath)
-    }
 
     return (	
         <div className={"commander"}>
@@ -177,6 +178,7 @@ export const Commander = ({
 }
 
 // TODO Sorting
+// TODO Selecting in restricted mode
 // TODO ExifDate
 // TODO Exif info in another style
 // TODO TAB to change Focus
