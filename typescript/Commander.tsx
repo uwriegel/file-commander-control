@@ -177,7 +177,6 @@ export const Commander = ({
     )
 }
 
-// TODO Selecting in restricted mode
 // TODO ExifDate
 // TODO Exif info in another style
 // TODO TAB to change Focus

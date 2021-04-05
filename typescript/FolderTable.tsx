@@ -114,9 +114,9 @@ export const FolderTable = ({
             return true
         }
         if (evt.which == 45) { // Ins
-            const item = displayItems.items[items.currentIndex ?? 0]
+            const item = displayItems.items[displayItems.currentIndex ?? 0]
             item.isSelected = !item.isNotSelectable && !item.isSelected
-            items.currentIndex = (items.currentIndex ?? 0) + 1
+            displayItems.currentIndex = (displayItems.currentIndex ?? 0) + 1
             onItemsChanged(items)
             onItemsChanged(folderItemsChanged(displayItems))
             return true
@@ -222,5 +222,3 @@ export const FolderTable = ({
         </div>
     )
 }
-
-// TODO: currentindex when restricting is not 0!
