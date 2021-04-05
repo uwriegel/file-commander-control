@@ -105,29 +105,30 @@ export const FolderTable = ({
         }
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
             displayItems.items.forEach((item, i) => item.isSelected = !item.isNotSelectable && i >= (items.currentIndex ?? 0)) 
-            onItemsChanged(folderItemsChanged(items))
+            onItemsChanged(folderItemsChanged(displayItems))
             return true
         }
         if (evt.which == 36 && evt.shiftKey) { // Shift + home
             displayItems.items.forEach((item, i) => item.isSelected = !item.isNotSelectable && i <= (items.currentIndex ?? 0)) 
-            onItemsChanged(folderItemsChanged(items))
+            onItemsChanged(folderItemsChanged(displayItems))
             return true
         }
         if (evt.which == 45) { // Ins
             const item = displayItems.items[items.currentIndex ?? 0]
             item.isSelected = !item.isNotSelectable && !item.isSelected
             items.currentIndex = (items.currentIndex ?? 0) + 1
-            onItemsChanged(folderItemsChanged(items))
+            onItemsChanged(items)
+            onItemsChanged(folderItemsChanged(displayItems))
             return true
         }
         if (evt.which == 107) { // Numlock +
             displayItems.items.forEach(item => item.isSelected = !item.isNotSelectable)
-            onItemsChanged(folderItemsChanged(items))
+            onItemsChanged(folderItemsChanged(displayItems))
             return true
         }
         if (evt.which == 109) { // Numlock -
             displayItems.items.forEach(item => item.isSelected = false)
-            onItemsChanged(folderItemsChanged(items))
+            onItemsChanged(folderItemsChanged(displayItems))
             return true
         }
         if (!evt.altKey && !evt.ctrlKey && evt.key.length > 0 && evt.key.length < 2) {
@@ -175,6 +176,7 @@ export const FolderTable = ({
         setRestrictValue("")
         if (originalItems.current) {
             setDisplayItems(originalItems.current)
+            onItemsChanged(originalItems.current!)
             originalItems.current = undefined
         }
     }
@@ -221,3 +223,4 @@ export const FolderTable = ({
     )
 }
 
+// TODO: currentindex when restricting is not 0!
