@@ -105,7 +105,6 @@ export const Commander = ({
         setColumnsRight(cols)
     }
     const onSort = (folderId: 1|2, column: number, isDescending: boolean, isSubItem?: boolean) => {
-        console.log("Fuck", column, isDescending, isSubItem)
         const sortedItems = sort(items(folderId), column, isDescending, isSubItem)
         setItems (folderId) (sortedItems)
     }

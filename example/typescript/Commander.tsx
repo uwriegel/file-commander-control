@@ -154,7 +154,6 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
     const getPathInfo = async (path: string | null, newSubPath?: string) => {
         const oldPath = path
         path = path && (path != "/" || newSubPath != "..") ? path : "root"
-        console.log(path)
         if (path != "root" || (newSubPath && newSubPath != "..")) {
             path = path.startsWith("/") && newSubPath ? path + '/' + newSubPath! : path
             path = path == "root" ? newSubPath! : path
@@ -198,6 +197,18 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
         return [...directories, ...files]
     }
 
+    const getExifDates = async (fileItems: FileItem[]) => {
+        const imgFiles = fileItems.filter((n, i) => !n.isDirectory && getExtension(n.name)?.toLowerCase().endsWith('jpg'))
+        console.log(imgFiles)
+        const res = await fetch(`http://localhost:3333/getExifDates}`, {
+            method: 'POST',
+            body: JSON.stringify()
+        }
+)
+        let items = await res.json() as FileItem[]
+    
+    }
+
     const getItems = async (pathInfo: PathInfo, folderToSelect?: string) => {
 
         if (pathInfo.path == "root") {
@@ -232,6 +243,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
                 items = items.filter(n => !n.isHidden)
 
             const result = sortItems([parentItem, ...items.map(makeFileItem)], sortByName)
+            getExifDates(result)
             const selectedIndex = folderToSelect ? result.findIndex(n => n.name == folderToSelect) : 0
             return [result, selectedIndex] as [FolderTableItem[], number]
         }
