@@ -204,7 +204,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
         const res = ae.localeCompare(be)
         return res != 0 ? res : a.name.localeCompare(b.name)
     }
-    const sortByDate = (a: FileItem, b: FileItem) => new Date(a.time).getTime() - new Date(b.time).getTime()
+    const sortByDate = (a: FileItem, b: FileItem) => new Date(a.exifDate || a.time).getTime() - new Date(b.exifDate || b.time).getTime()
     const sortBySize = (a: FileItem, b: FileItem) => a.size - b.size
 
     const sortItems = (items: FileItem[], sortfunc: (a: FileItem, b: FileItem)=>number) => {
