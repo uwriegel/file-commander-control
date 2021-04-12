@@ -118,8 +118,11 @@ export const Commander = ({
         setColumnsRight(cols)
     }
     const onSort = (folderId: 1|2, column: number, isDescending: boolean, isSubItem?: boolean) => {
+        const selectedItem = items(folderId) [currentIndex(folderId)]
         const sortedItems = sort(items(folderId), column, isDescending, isSubItem)
+        const selectedIndex = sortedItems.findIndex(n => n == selectedItem)
         setItems (folderId) (sortedItems)
+        setCurrentIndex(folderId)(selectedIndex)
     }
 
     const onEnter = async (folderId: (1|2), items: FolderTableItem[]) => {
@@ -193,7 +196,6 @@ export const Commander = ({
     )
 }
 
-// TODO OnSorting: keepcurrentSelection
 // TODO OnSorting: ExifDate
 // TODO TAB to change Focus
 
