@@ -227,15 +227,11 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             body: JSON.stringify({path, files: imgFiles})
         })
 
-        setTimeout(async () => {
-
         let items = await res.json() as ExifDate[]
-        // TODO: check long duration selected item
         if (items.length > 0 && currentExifIds.get(id) == currentId) {
             items.forEach(n => fileItems[n.index].exifDate = n.exifDate)
-            updateItems(fileItems)
+            updateItems([...fileItems])
         }
-        }, 5000)
     }
 
     const getItems = async (id: number, pathInfo: PathInfo, updateItems: (updatedItems: FolderTableItem[])=>void, folderToSelect?: string) => {

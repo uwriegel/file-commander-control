@@ -46,8 +46,6 @@ export const FolderTest = ({theme}: FolderTestProps) => {
         console.log("Enter", items)
     }
 
-    // TODO: Refresh display when selecting multiple
-
     const itemRenderer = (item: TableItem) => {
         const tableItem = item as FolderItem
         return [

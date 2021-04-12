@@ -105,30 +105,29 @@ export const FolderTable = ({
         }
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
             displayItems.forEach((item, i) => item.isSelected = !item.isNotSelectable && i >= (currentIndex ?? 0)) 
-            onItemsChanged(displayItems)
+            onItemsChanged([...displayItems])
             return true
         }
         if (evt.which == 36 && evt.shiftKey) { // Shift + home
             displayItems.forEach((item, i) => item.isSelected = !item.isNotSelectable && i <= (currentIndex ?? 0)) 
-            onItemsChanged(displayItems)
+            onItemsChanged([...displayItems])
             return true
         }
         if (evt.which == 45) { // Ins
             const item = displayItems[currentIndex ?? 0]
             item.isSelected = !item.isNotSelectable && !item.isSelected
             onCurrentIndexChanged((currentIndex ?? 0) + 1)
-            onItemsChanged(items)
-            onItemsChanged(displayItems)
+            onItemsChanged([...displayItems])
             return true
         }
         if (evt.which == 107) { // Numlock +
             displayItems.forEach(item => item.isSelected = !item.isNotSelectable)
-            onItemsChanged(displayItems)
+            onItemsChanged([...displayItems])
             return true
         }
         if (evt.which == 109) { // Numlock -
             displayItems.forEach(item => item.isSelected = false)
-            onItemsChanged(displayItems)
+            onItemsChanged([...displayItems])
             return true
         }
         if (!evt.altKey && !evt.ctrlKey && evt.key.length > 0 && evt.key.length < 2) {
@@ -165,11 +164,8 @@ export const FolderTable = ({
             setRestrictValue(newValue)
             if (restrictValue.length == 0)  
                 originalItems.current = items
-            // setDisplayItems(setFolderItems({
-            //     items: filteredItems,
-            //     currentIndex: 0
-            // }))
             setDisplayItems(filteredItems)
+            onCurrentIndexChanged(0)            
         }
     }
 
@@ -178,6 +174,7 @@ export const FolderTable = ({
         if (originalItems.current) {
             setDisplayItems(originalItems.current)
             onItemsChanged(originalItems.current!)
+            onCurrentIndexChanged(0)            
             originalItems.current = undefined
         }
     }

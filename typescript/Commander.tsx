@@ -193,7 +193,6 @@ export const Commander = ({
     )
 }
 
-// TODO ExifDate: refresh
 // TODO OnSorting: keepcurrentSelection
 // TODO OnSorting: ExifDate
 // TODO TAB to change Focus
