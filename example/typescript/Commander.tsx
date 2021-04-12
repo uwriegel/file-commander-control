@@ -26,6 +26,12 @@ type FileItem = {
     isNotSelectable: boolean
 }
 
+type ExifDate = {
+    index: number
+    name: string,
+    exifDate: string
+}
+
 type NormalizedPath = {
     path: string,
 }
@@ -197,19 +203,25 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
         return [...directories, ...files]
     }
 
-    const getExifDates = async (fileItems: FileItem[]) => {
-        const imgFiles = fileItems.filter((n, i) => !n.isDirectory && getExtension(n.name)?.toLowerCase().endsWith('jpg'))
-        console.log(imgFiles)
-        const res = await fetch(`http://localhost:3333/getExifDates}`, {
+    const getExifDates = async (path: string, fileItems: FileItem[], updateItems: (updatedItems: FolderTableItem[])=>void) => {
+
+        const imgFiles = 
+            fileItems
+                .map((n, i) => ({index: i, name: n.name, isDirectory: n.isDirectory}))
+                .filter(n => !n.isDirectory && getExtension(n.name)?.toLowerCase().endsWith('jpg'))
+        const res = await fetch("http://localhost:3333/getExifDates", {
+            headers: {"Content-Type": "application/json"},
             method: 'POST',
-            body: JSON.stringify()
-        }
-)
-        let items = await res.json() as FileItem[]
-    
+            body: JSON.stringify({path, files: imgFiles})
+        })
+        let items = await res.json() as ExifDate[]
+        // TODO: exifDate blue
+        // TODO: check long duration selected item
+        items.forEach(n => fileItems[n.index].time = n.exifDate)
+        updateItems(fileItems)
     }
 
-    const getItems = async (pathInfo: PathInfo, folderToSelect?: string) => {
+    const getItems = async (pathInfo: PathInfo, updateItems: (updatedItems: FolderTableItem[])=>void, folderToSelect?: string) => {
 
         if (pathInfo.path == "root") {
             const res = await fetch(`http://localhost:3333/root`)
@@ -243,7 +255,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
                 items = items.filter(n => !n.isHidden)
 
             const result = sortItems([parentItem, ...items.map(makeFileItem)], sortByName)
-            getExifDates(result)
+            getExifDates(pathInfo.path, result, updateItems)
             const selectedIndex = folderToSelect ? result.findIndex(n => n.name == folderToSelect) : 0
             return [result, selectedIndex] as [FolderTableItem[], number]
         }

@@ -19,8 +19,10 @@
     "react": "^17.0.0"
   },
   "dependencies": {
+    "@types/lodash": "^4.14.168",
     "@types/react-transition-group": "^4.4.1",
     "grid-splitter-react": "^1.2.2",
+    "lodash": "^4.17.21",
     "react-transition-group": "^4.4.1",
     "virtual-table-react": "^6.8.3"
   },

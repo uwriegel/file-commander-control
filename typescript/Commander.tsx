@@ -1,4 +1,5 @@
 import React, { useState, useRef, useLayoutEffect, useEffect } from 'react'
+import _ from 'lodash'
 import { SplitterGrid } from 'grid-splitter-react'
 import { FolderTable, setFolderItems, folderItemsChanged, FolderTableItem, FolderTableItems } from './FolderTable'
 import { Column, TableItem } from 'virtual-table-react'
@@ -14,7 +15,7 @@ type CommanderProps = {
     namespace: string,
     theme: string,
     getPathInfo: (path: string | null, newSubPath: string | undefined)=>Promise<[PathInfo, string?]>
-    getItems: (pathInfo: PathInfo, folderToSelect?: string)=>Promise<[FolderTableItem[], number]>,
+    getItems: (pathInfo: PathInfo, updateItems: (updatedItems: FolderTableItem[])=>void, folderToSelect?: string)=>Promise<[FolderTableItem[], number]>,
     refreshLeft: boolean,
     refreshRight: boolean,
     sort: (items: FolderTableItems, column: number, isDescending: boolean, isSubItem?: boolean) => FolderTableItems
@@ -91,10 +92,18 @@ export const Commander = ({
         const [pathInfo, folderToSelect] = await getPathInfo(path, newSubPath)
         setItems (folderId) (setFolderItems({ items: []}))
         setPathInfo (folderId) (pathInfo)
-        const [folderItems, indexToSelect] = await getItems(pathInfo, folderToSelect)
+        const [folderItems, indexToSelect] = await getItems(pathInfo, getUpdateItems(folderId), folderToSelect)
         setItems (folderId) (setFolderItems({ items: folderItems, currentIndex: indexToSelect}))
         setFocus (folderId)
     }
+
+    const updateItems = (folderId: 1|2, updatedItems: FolderTableItem[]) => {
+        setItems (folderId) (folderItemsChanged({items: updatedItems}))
+    }
+
+    const getUpdateItems = (folderId: 1|2) => 
+        _.partial(updateItems, folderId)
+    
 
     const onColsChangedLeft = (cols: Column[])=> {
         localStorage.setItem(`${namespace}-${pathInfoLeft.current?.type}-left-columnWiths`, JSON.stringify(cols.map(n => n.width)))
