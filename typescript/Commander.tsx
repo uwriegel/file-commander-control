@@ -197,6 +197,5 @@ export const Commander = ({
 }
 
 // TODO TAB to change Focus
-// TODO Status only in app! with item and # items/# of selected items 
 // TODO F3 viewer
-
+// TODO Status only in app! with item and # items/# of selected items 
