@@ -28,11 +28,7 @@ app.post('/getExifDates', async (req, res) => {
     await Promise.all(exifDates.map(async n => 
         n.exifDate = await addon.getExifDate(ioPath.join(req.body.path, n.name))
     ))
-
-    // TODO long duration
-    // TODO: filter no exifDates
-
-    res.json(exifDates)
+    res.json(exifDates.filter(n => n.exifDate))
 })
 
 app.get('/normalize', async (req, res) => {

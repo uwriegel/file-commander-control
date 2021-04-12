@@ -32,6 +32,8 @@
     --gridsplitter-grip-color: lightgray;
     --gridsplitter-grip-hover-color: darkgray;
     --gridsplitter-grip-active-color: #6b6969;
+
+    --exif: rgb(255, 255, 155);
 }
 body {
     font-size: 85%;

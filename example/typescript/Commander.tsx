@@ -18,6 +18,7 @@ type DriveItem = {
 type FileItem = {
     name: string,
     time: string,
+    exifDate?: string,
     size: number,
     isDirectory: boolean
     isParent: boolean
@@ -40,6 +41,9 @@ type CommanderProps = {
     theme: string,
     showHidden: boolean
 }
+
+const currentExifIds = new Map<number, number>()
+var currentExifId = 0
 
 const dateFormat = Intl.DateTimeFormat("de-DE", {
     year: "numeric",
@@ -110,6 +114,12 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
         : `http://localhost:3333/geticon?ext=.${ext}`
     
     const itemRendererFiles = (item: TableItem) => {
+
+        const getTimeClassName = () => [ 
+                tableItem.isHidden ? "hidden" : null, 
+                tableItem.exifDate ? "exif" : null
+            ].filter(n => n).join(" ")
+
         const tableItem = item as FileItem
         const ext = getExtension(tableItem.name) || ""
         return [
@@ -134,7 +144,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
                 }
                 <span>{tableItem.name}</span>
             </td>,
-            <td key={2} className={tableItem.isHidden ? "hidden" : ""}>{getDateTime(tableItem.time)}</td>,
+            <td key={2} className={getTimeClassName()}>{getDateTime(tableItem.exifDate || tableItem.time)}</td>,
             <td key={3} className={tableItem.isHidden ? "hidden rightAligned" : "rightAligned"}>{getSize(tableItem.size)}</td>	
 	    ]
     }
@@ -203,8 +213,10 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
         return [...directories, ...files]
     }
 
-    const getExifDates = async (path: string, fileItems: FileItem[], updateItems: (updatedItems: FolderTableItem[])=>void) => {
+    const getExifDates = async (id: number, path: string, fileItems: FileItem[], updateItems: (updatedItems: FolderTableItem[])=>void) => {
 
+        const currentId = ++currentExifId
+        currentExifIds.set(id, currentId)
         const imgFiles = 
             fileItems
                 .map((n, i) => ({index: i, name: n.name, isDirectory: n.isDirectory}))
@@ -214,14 +226,19 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
             method: 'POST',
             body: JSON.stringify({path, files: imgFiles})
         })
+
+        setTimeout(async () => {
+
         let items = await res.json() as ExifDate[]
-        // TODO: exifDate blue
         // TODO: check long duration selected item
-        items.forEach(n => fileItems[n.index].time = n.exifDate)
-        updateItems(fileItems)
+        if (items.length > 0 && currentExifIds.get(id) == currentId) {
+            items.forEach(n => fileItems[n.index].exifDate = n.exifDate)
+            updateItems(fileItems)
+        }
+        }, 5000)
     }
 
-    const getItems = async (pathInfo: PathInfo, updateItems: (updatedItems: FolderTableItem[])=>void, folderToSelect?: string) => {
+    const getItems = async (id: number, pathInfo: PathInfo, updateItems: (updatedItems: FolderTableItem[])=>void, folderToSelect?: string) => {
 
         if (pathInfo.path == "root") {
             const res = await fetch(`http://localhost:3333/root`)
@@ -255,7 +272,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
                 items = items.filter(n => !n.isHidden)
 
             const result = sortItems([parentItem, ...items.map(makeFileItem)], sortByName)
-            getExifDates(pathInfo.path, result, updateItems)
+            getExifDates(id, pathInfo.path, result, updateItems)
             const selectedIndex = folderToSelect ? result.findIndex(n => n.name == folderToSelect) : 0
             return [result, selectedIndex] as [FolderTableItem[], number]
         }

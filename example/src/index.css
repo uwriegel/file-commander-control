@@ -58,3 +58,6 @@ body {
 .hidden {
 	opacity: 0.5;
 }
+.exif {
+	color: var(--exif);
+}

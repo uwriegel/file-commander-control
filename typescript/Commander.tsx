@@ -15,7 +15,7 @@ type CommanderProps = {
     namespace: string,
     theme: string,
     getPathInfo: (path: string | null, newSubPath: string | undefined)=>Promise<[PathInfo, string?]>
-    getItems: (pathInfo: PathInfo, updateItems: (updatedItems: FolderTableItem[])=>void, folderToSelect?: string)=>Promise<[FolderTableItem[], number]>,
+    getItems: (id: number, pathInfo: PathInfo, updateItems: (updatedItems: FolderTableItem[])=>void, folderToSelect?: string)=>Promise<[FolderTableItem[], number]>,
     refreshLeft: boolean,
     refreshRight: boolean,
     sort: (items: FolderTableItems, column: number, isDescending: boolean, isSubItem?: boolean) => FolderTableItems
@@ -92,7 +92,7 @@ export const Commander = ({
         const [pathInfo, folderToSelect] = await getPathInfo(path, newSubPath)
         setItems (folderId) (setFolderItems({ items: []}))
         setPathInfo (folderId) (pathInfo)
-        const [folderItems, indexToSelect] = await getItems(pathInfo, getUpdateItems(folderId), folderToSelect)
+        const [folderItems, indexToSelect] = await getItems(folderId, pathInfo, getUpdateItems(folderId), folderToSelect)
         setItems (folderId) (setFolderItems({ items: folderItems, currentIndex: indexToSelect}))
         setFocus (folderId)
     }
@@ -186,7 +186,6 @@ export const Commander = ({
 }
 
 // TODO ExifDate
-// TODO Exif info in another style
 // TODO TAB to change Focus
 
 // TODO Status only in app! with item and # items/# of selected items 
