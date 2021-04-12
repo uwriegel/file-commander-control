@@ -1,7 +1,7 @@
 import React, { useState, useRef, useLayoutEffect, useEffect } from 'react'
 import _ from 'lodash'
 import { SplitterGrid } from 'grid-splitter-react'
-import { FolderTable, setFolderItems, folderItemsChanged, FolderTableItem, FolderTableItems } from './FolderTable'
+import { FolderTable, FolderTableItem } from './FolderTable'
 import { Column, TableItem } from 'virtual-table-react'
 
 export type PathInfo = {
@@ -18,7 +18,7 @@ type CommanderProps = {
     getItems: (id: number, pathInfo: PathInfo, updateItems: (updatedItems: FolderTableItem[])=>void, folderToSelect?: string)=>Promise<[FolderTableItem[], number]>,
     refreshLeft: boolean,
     refreshRight: boolean,
-    sort: (items: FolderTableItems, column: number, isDescending: boolean, isSubItem?: boolean) => FolderTableItems
+    sort: (items: FolderTableItem[], column: number, isDescending: boolean, isSubItem?: boolean) => FolderTableItem[]
 }
 
 export const Commander = ({
@@ -78,10 +78,15 @@ export const Commander = ({
     const getItemRendererRight = () => pathInfoRight.current ? pathInfoRight.current.itemRenderer : (item: TableItem) => ([] as JSX.Element[])
     const getItemRenderer = (folderId: 1|2) => folderId == 1 ? getItemRendererLeft() : getItemRendererRight()
 
-    const [itemsLeft, setItemsLeft ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
-    const [itemsRight, setItemsRight ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
+    const [itemsLeft, setItemsLeft ] = useState([] as FolderTableItem[])
+    const [itemsRight, setItemsRight ] = useState([] as FolderTableItem[])
     const setItems = (folderId: 1|2) => folderId == 1 ? setItemsLeft : setItemsRight
     const items = (folderId: 1|2) => folderId == 1 ? itemsLeft : itemsRight
+
+    const [currentIndexLeft, setCurrentIndexLeft ] = useState(0)
+    const [currentIndexRight, setCurrentIndexRight ] = useState(0)
+    const setCurrentIndex = (folderId: 1|2) => folderId == 1 ? setCurrentIndexLeft : setCurrentIndexRight
+    const currentIndex = (folderId: 1|2) => folderId == 1 ? currentIndexLeft : currentIndexRight
 
     const onPathChangedLeft = (path: string) =>  onChange(1, path)
     const onPathChangedRight = (path: string) => onChange(2, path)
@@ -90,16 +95,15 @@ export const Commander = ({
 
     const onChange = async (folderId: 1|2, path: string | null, newSubPath?: string) => {
         const [pathInfo, folderToSelect] = await getPathInfo(path, newSubPath)
-        setItems (folderId) (setFolderItems({ items: []}))
+        setItems (folderId) ([])
         setPathInfo (folderId) (pathInfo)
         const [folderItems, indexToSelect] = await getItems(folderId, pathInfo, getUpdateItems(folderId), folderToSelect)
-        setItems (folderId) (setFolderItems({ items: folderItems, currentIndex: indexToSelect}))
+        setItems (folderId) (folderItems) 
+        setCurrentIndex (folderId) (indexToSelect)
         setFocus (folderId)
     }
 
-    const updateItems = (folderId: 1|2, updatedItems: FolderTableItem[]) => {
-        setItems (folderId) (folderItemsChanged({items: updatedItems}))
-    }
+    const updateItems = (folderId: 1|2, updatedItems: FolderTableItem[]) => setItems (folderId) (updatedItems)
 
     const getUpdateItems = (folderId: 1|2) => 
         _.partial(updateItems, folderId)
@@ -159,8 +163,10 @@ export const Commander = ({
                         onColumnsChanged={onColsChangedLeft} 
                         onSort={(col, isDesc, isSub) => onSort(1, col, isDesc, isSub)}
                         items={itemsLeft}
-                        itemRenderer={getItemRenderer (1)}
                         onItemsChanged={setItemsLeft}
+                        itemRenderer={getItemRenderer (1)}
+                        currentIndex={currentIndexLeft}
+                        onCurrentIndexChanged={setCurrentIndexLeft}
                         path={pathLeft}
                         onPathChanged={onPathChangedLeft}
                         onEnter={items => onEnter(1, items)} /> 
@@ -174,8 +180,10 @@ export const Commander = ({
                         onColumnsChanged={onColsChangedRight} 
                         onSort={(col, isDesc, isSub) => onSort(2, col, isDesc, isSub)}
                         items={itemsRight}
-                        itemRenderer={getItemRenderer (2)}
                         onItemsChanged={setItemsRight}
+                        itemRenderer={getItemRenderer (2)}
+                        currentIndex={currentIndexRight}
+                        onCurrentIndexChanged={setCurrentIndexRight}
                         path={pathRight}
                         onPathChanged={onPathChangedRight}
                         onEnter={items => onEnter(2, items)} /> 
@@ -185,7 +193,9 @@ export const Commander = ({
     )
 }
 
-// TODO ExifDate
+// TODO ExifDate: refresh
+// TODO OnSorting: keepcurrentSelection
+// TODO OnSorting: ExifDate
 // TODO TAB to change Focus
 
 // TODO Status only in app! with item and # items/# of selected items 

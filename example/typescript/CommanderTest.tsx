@@ -1,7 +1,7 @@
 import React, { useState, useRef, useLayoutEffect, useEffect } from 'react'
 import { SplitterGrid } from 'grid-splitter-react'
-import { FolderTable, setFolderItems, folderItemsChanged } from 'file-commander-control'
-import { FolderTableItem, FolderTableItems } from '../../dist/FolderTable'
+import { FolderTable } from 'file-commander-control'
+import { FolderTableItem } from '../../dist/FolderTable'
 import { Column, TableItem } from 'virtual-table-react'
 
 interface FolderItem extends FolderTableItem {
@@ -35,9 +35,13 @@ export const CommanderTest = ({theme}: CommanderTestProps) => {
         { name: "Letzte Spalte", isSortable: true }
     ] as Column[])
 
-    const [itemsLeft, setItemsLeft ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
-    const [itemsRight, setItemsRight ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
+    const [itemsLeft, setItemsLeft ] = useState([] as FolderTableItem[])
+    const [itemsRight, setItemsRight ] = useState([] as FolderTableItem[])
     const setItems = (folderId: 1|2) => folderId == 1 ? setItemsLeft : setItemsRight
+
+    const [currentIndexLeft, setCurrentIndexLeft ] = useState(0)
+    const [currentIndexRight, setCurrentIndexRight ] = useState(0)
+    const setCurrentIndex = (folderId: 1|2) => folderId == 1 ? setCurrentIndexLeft : setCurrentIndexRight
 
     const onSetFocusLeft = () => {
         setFocusedLeft(true)
@@ -67,7 +71,7 @@ export const CommanderTest = ({theme}: CommanderTestProps) => {
     const onChange = (folderId: 1|2) => {
         setPath (folderId) ("/home/uwe/documents")
         const folderItems = Array.from(Array(6000).keys()).map(index => ({ subPath: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
-        setItems (folderId) (setFolderItems({ items: folderItems}))
+        setItems (folderId) (folderItems)
     }
 
     useEffect(() => setFocusedLeft(true), [])
@@ -108,8 +112,10 @@ export const CommanderTest = ({theme}: CommanderTestProps) => {
                         onColumnsChanged={onColsChangedLeft} 
                         onSort={onSortLeft}
                         items={itemsLeft}
-                        itemRenderer={itemRenderer}
                         onItemsChanged={setItemsLeft}
+                        itemRenderer={itemRenderer}
+                        currentIndex={currentIndexLeft}
+                        onCurrentIndexChanged={setCurrentIndexLeft}
                         path={pathLeft}
                         onPathChanged={onPathChangedLeft}
                         onEnter={onEnter} /> 
@@ -123,9 +129,11 @@ export const CommanderTest = ({theme}: CommanderTestProps) => {
                         onColumnsChanged={onColsChangedRight} 
                         onSort={onSortRight}
                         items={itemsRight}
-                        itemRenderer={itemRenderer}
                         onItemsChanged={setItemsRight}
-                        path={pathRight}
+                        itemRenderer={itemRenderer}
+                        currentIndex={currentIndexRight}
+                        onCurrentIndexChanged={setCurrentIndexRight}
+                       path={pathRight}
                         onPathChanged={onPathChangedRight}
                         onEnter={onEnter} /> 
                 )} 

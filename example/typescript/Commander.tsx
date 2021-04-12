@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Commander, Column, PathInfo, FolderTableItem, TableItem, FolderTableItems  } from 'file-commander-control'
+import { Commander, Column, PathInfo, FolderTableItem, TableItem } from 'file-commander-control'
 import compose from 'lodash/fp/compose'
 import * as Array from './Array'
 
@@ -278,7 +278,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
         }
     }
 
-    const sort = (items: FolderTableItems, column: number, isDescending: boolean, isSubItem?: boolean) => {
+    const sort = (items: FolderTableItem[], column: number, isDescending: boolean, isSubItem?: boolean) => {
 
         let sortfunc: (a: FileItem, b: FileItem)=>number = (a, b)=>0
         switch (column) {
@@ -295,7 +295,7 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
                 sortfunc = isDescending ? compose(n => -n, sortBySize) : sortBySize
                 break
         }
-        return { items: sortItems(items.items as FileItem[], sortfunc)}
+        return sortItems(items as FileItem[], sortfunc)
     }
     useEffect(() => {
         doRefreshLeft(!refreshLeft)

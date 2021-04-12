@@ -24,7 +24,7 @@
     "grid-splitter-react": "^1.2.2",
     "lodash": "^4.17.21",
     "react-transition-group": "^4.4.1",
-    "virtual-table-react": "^6.8.3"
+    "virtual-table-react": "^7.0.0"
   },
   "devDependencies": {
     "@types/react": "^17.0.2",

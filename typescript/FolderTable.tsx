@@ -1,7 +1,7 @@
 import React, { ChangeEvent, useLayoutEffect, useRef, useState } from 'react'
 import { CSSTransition } from 'react-transition-group'
 import 'virtual-table-react/dist/index.css'
-import { Column, Table, TableItems, setTableItems, TableItem } from 'virtual-table-react'
+import { Column, Table, TableItem } from 'virtual-table-react'
 
 // @ts-ignore
 import styles from './styles.module.css'
@@ -14,16 +14,12 @@ export interface FolderTableItem extends TableItem {
     isNotSelectable?: boolean
 }
 
-export interface FolderTableItems extends TableItems {
-    items: FolderTableItem[]
-}
+//export const setFolderItems = (items: FolderTableItem[]) => setTableItems(items) as FolderTableItem[]
 
-export const setFolderItems = (items: FolderTableItems) => setTableItems(items) as FolderTableItems
-
-export const folderItemsChanged = (items: FolderTableItems) => setFolderItems({ 
-    items: items.items,
-    currentIndex: items.currentIndex 
-})
+// export const folderItemsChanged = (items: FolderTableItems) => setFolderItems({ 
+//     items: items.items,
+//     currentIndex: items.currentIndex 
+// })
 
 export type FolderTableProps = {
     theme?: string
@@ -32,9 +28,11 @@ export type FolderTableProps = {
     columns: Column[]
     onColumnsChanged: (cols: Column[])=>void
     onSort: (index: number, descending: boolean, isSubItem?: boolean)=>void
-    items: FolderTableItems
+    items: FolderTableItem[]
+    onItemsChanged: (items: FolderTableItem[])=>void
+    currentIndex: number,
+    onCurrentIndexChanged: (index: number)=>void
     itemRenderer: (item: TableItem)=>JSX.Element[]
-    onItemsChanged: (items: FolderTableItems)=>void
     path: string
     onPathChanged: (path: string)=>void,
     onEnter: (items: FolderTableItem[])=>void
@@ -48,8 +46,10 @@ export const FolderTable = ({
     onColumnsChanged, 
     onSort, 
     items, 
+    onItemsChanged,    
+    currentIndex,
+    onCurrentIndexChanged,
     itemRenderer,
-    onItemsChanged,
     path,
     onPathChanged,
     onEnter
@@ -63,15 +63,15 @@ export const FolderTable = ({
         setPathText(path)
     }, [path])
 
-    const [displayItems, setDisplayItems] = useState(setFolderItems({ items: [] }) as FolderTableItems)
+    const [displayItems, setDisplayItems] = useState([] as FolderTableItem[])
     useLayoutEffect(() => setDisplayItems(items), [items])
-    const originalItems = useRef<FolderTableItems>()
+    const originalItems = useRef<FolderTableItem[]>()
 
     const getSelectedItems = () => {
-        const selectedItems = displayItems.items.filter(n => n.isSelected)
+        const selectedItems = displayItems.filter(n => n.isSelected)
         return selectedItems.length > 0 
             ? selectedItems 
-            : [ displayItems.items[displayItems.currentIndex || 0] ]
+            : [ displayItems[currentIndex || 0] ]
     }
 
     const pathInput = useRef<HTMLInputElement>(null)        
@@ -104,31 +104,31 @@ export const FolderTable = ({
             return true
         }
         if (evt.which == 35 && evt.shiftKey) { // Shift + end
-            displayItems.items.forEach((item, i) => item.isSelected = !item.isNotSelectable && i >= (items.currentIndex ?? 0)) 
-            onItemsChanged(folderItemsChanged(displayItems))
+            displayItems.forEach((item, i) => item.isSelected = !item.isNotSelectable && i >= (currentIndex ?? 0)) 
+            onItemsChanged(displayItems)
             return true
         }
         if (evt.which == 36 && evt.shiftKey) { // Shift + home
-            displayItems.items.forEach((item, i) => item.isSelected = !item.isNotSelectable && i <= (items.currentIndex ?? 0)) 
-            onItemsChanged(folderItemsChanged(displayItems))
+            displayItems.forEach((item, i) => item.isSelected = !item.isNotSelectable && i <= (currentIndex ?? 0)) 
+            onItemsChanged(displayItems)
             return true
         }
         if (evt.which == 45) { // Ins
-            const item = displayItems.items[displayItems.currentIndex ?? 0]
+            const item = displayItems[currentIndex ?? 0]
             item.isSelected = !item.isNotSelectable && !item.isSelected
-            displayItems.currentIndex = (displayItems.currentIndex ?? 0) + 1
+            onCurrentIndexChanged((currentIndex ?? 0) + 1)
             onItemsChanged(items)
-            onItemsChanged(folderItemsChanged(displayItems))
+            onItemsChanged(displayItems)
             return true
         }
         if (evt.which == 107) { // Numlock +
-            displayItems.items.forEach(item => item.isSelected = !item.isNotSelectable)
-            onItemsChanged(folderItemsChanged(displayItems))
+            displayItems.forEach(item => item.isSelected = !item.isNotSelectable)
+            onItemsChanged(displayItems)
             return true
         }
         if (evt.which == 109) { // Numlock -
-            displayItems.items.forEach(item => item.isSelected = false)
-            onItemsChanged(folderItemsChanged(displayItems))
+            displayItems.forEach(item => item.isSelected = false)
+            onItemsChanged(displayItems)
             return true
         }
         if (!evt.altKey && !evt.ctrlKey && evt.key.length > 0 && evt.key.length < 2) {
@@ -160,15 +160,16 @@ export const FolderTable = ({
 
     const restrictTo = (newValue: string) => {
         const itemsToSearch = originalItems.current || displayItems
-        const filteredItems = itemsToSearch.items.filter(n => n.subPath.toLocaleLowerCase().startsWith(newValue))
+        const filteredItems = itemsToSearch.filter(n => n.subPath.toLocaleLowerCase().startsWith(newValue))
         if (filteredItems.length) {
             setRestrictValue(newValue)
             if (restrictValue.length == 0)  
                 originalItems.current = items
-            setDisplayItems(setFolderItems({
-                items: filteredItems,
-                currentIndex: 0
-            }))
+            // setDisplayItems(setFolderItems({
+            //     items: filteredItems,
+            //     currentIndex: 0
+            // }))
+            setDisplayItems(filteredItems)
         }
     }
 
@@ -181,8 +182,8 @@ export const FolderTable = ({
         }
     }
 
-    const onFolderItemsChanged = (items: TableItems) => {
-        const folderItems = items as FolderTableItems
+    const onFolderItemsChanged = (items: TableItem[]) => {
+        const folderItems = items as FolderTableItem[]
         setDisplayItems(folderItems)
         onItemsChanged(folderItems)
     }
@@ -206,8 +207,10 @@ export const FolderTable = ({
                 onColumnsChanged={onColumnsChanged} 
                 onSort={onSort} 
                 items={displayItems}
-                itemRenderer={itemRenderer}
                 onItemsChanged={onFolderItemsChanged} 
+                currentIndex={currentIndex}
+                onCurrentIndexChanged={onCurrentIndexChanged}
+                itemRenderer={itemRenderer}
                 theme={theme}
                 focused={focused}
                 onFocused={setFocused}

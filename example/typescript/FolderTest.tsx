@@ -1,7 +1,7 @@
 import React, { useState, useRef } from 'react'
-import { FolderTable, setFolderItems, folderItemsChanged } from 'file-commander-control'
-import { TableItem, TableItems, Column, Table } from 'virtual-table-react'
-import { FolderTableItem, FolderTableItems } from '../../dist/FolderTable'
+import { FolderTable } from 'file-commander-control'
+import { TableItem, Column, Table } from 'virtual-table-react'
+import { FolderTableItem } from '../../dist/FolderTable'
 
 interface FolderItem extends FolderTableItem {
     index: number
@@ -33,17 +33,20 @@ export const FolderTest = ({theme}: FolderTestProps) => {
     const onColsChanged = (cols: Column[])=> {}
     const onSort = ()=> {}
 
-    const [items, setItems ] = useState(setFolderItems({ items: [] }) as FolderTableItems)
+    const [items, setItems ] = useState([] as FolderTableItem[])
+    const [currentIndex, setCurrentIndex ] = useState(0)
 
     const onChange = () => {
         setPath("/home/uwe/documents")
         const folderItems = Array.from(Array(6000).keys()).map(index => ({ subPath: `Name ${index}`, col2: `Adresse ${index}`, col3: `Größe ${index}`, index: index} as FolderItem))
-        setItems(setFolderItems({ items: folderItems}))
+        setItems(folderItems)
     }
 
     const onEnter = (items: FolderTableItem[]) => {
         console.log("Enter", items)
     }
+
+    // TODO: Refresh display when selecting multiple
 
     const itemRenderer = (item: TableItem) => {
         const tableItem = item as FolderItem
@@ -66,8 +69,10 @@ export const FolderTest = ({theme}: FolderTestProps) => {
                 onColumnsChanged={onColsChanged} 
                 onSort={onSort}
                 items={items}
-                itemRenderer={itemRenderer}
                 onItemsChanged={setItems}
+                itemRenderer={itemRenderer}
+                currentIndex={currentIndex}
+                onCurrentIndexChanged={setCurrentIndex}
                 path={path}
                 onPathChanged={onPathChanged}
                 onEnter={onEnter} /> 
