@@ -130,7 +130,18 @@ export const Commander = ({
             await onChange(folderId, getPath(folderId), items[0].subPath)
     }
 
+    const onKeyDown = (sevt: React.KeyboardEvent) => {
+        const evt = sevt.nativeEvent
+        if (evt.which == 9) { // tab
+            const iaf = getInactiveFolder()
+            setFocus(iaf)            
+            sevt.stopPropagation()
+            sevt.preventDefault()
+        }
+    }
+
     const activeFolder = useRef<1|2>(1)
+    const getInactiveFolder = () => activeFolder.current == 1 ? 2 : 1
     useLayoutEffect(() => {
         if (focusedLeft)
             activeFolder.current = 1
@@ -155,7 +166,7 @@ export const Commander = ({
     }, [])
 
     return (	
-        <div className={"commander"}>
+        <div className={"commander"} onKeyDown={onKeyDown}>
             <SplitterGrid 
                 first={(
                     <FolderTable 
@@ -196,6 +207,5 @@ export const Commander = ({
     )
 }
 
-// TODO TAB to change Focus
 // TODO F3 viewer
 // TODO Status only in app! with item and # items/# of selected items 
