@@ -215,6 +215,7 @@ export const Commander = ({
     )
 }
 
+// TODO VirtualTableReact: adapt VirtualTable to Table
 // TODO F3 viewer: OnGridChanged: resize VirtualTables
 // TODO F3 viewer
 // TODO Status only in app! with item and # items/# of selected items 
