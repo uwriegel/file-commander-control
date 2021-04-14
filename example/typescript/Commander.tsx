@@ -40,6 +40,7 @@ type NormalizedPath = {
 type CommanderProps = {
     theme: string,
     showHidden: boolean
+    isViewerVisible: boolean
 }
 
 const currentExifIds = new Map<number, number>()
@@ -64,7 +65,7 @@ const getDateTime = (dateString: string) => {
     return dateFormat.format(date) + " " + timeFormat.format(date)  
 }
 
-export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
+export const CommanderContainer = ({theme, showHidden, isViewerVisible}: CommanderProps) => {
 
     const [refreshLeft, doRefreshLeft] = useState(false)
     const [refreshRight, doRefreshRight] = useState(false)
@@ -300,6 +301,6 @@ export const CommanderContainer = ({theme, showHidden}: CommanderProps) => {
          
     return <Commander namespace={"test-commander"} 
             theme={theme} getPathInfo={getPathInfo} getItems={getItems}
-            refreshLeft={refreshLeft} refreshRight={refreshRight} sort= {sort} />
+            refreshLeft={refreshLeft} refreshRight={refreshRight} sort= {sort} isViewerVisible ={isViewerVisible} />
 }
 

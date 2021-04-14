@@ -19,10 +19,11 @@ type CommanderProps = {
     refreshLeft: boolean,
     refreshRight: boolean,
     sort: (items: FolderTableItem[], column: number, isDescending: boolean, isSubItem?: boolean) => FolderTableItem[]
+    isViewerVisible: boolean
 }
 
 export const Commander = ({
-        namespace, theme, getPathInfo, getItems, refreshLeft, refreshRight, sort
+        namespace, theme, getPathInfo, getItems, refreshLeft, refreshRight, sort, isViewerVisible
     }: CommanderProps) => {
 // ============================== States =======================================
 
@@ -167,45 +168,53 @@ export const Commander = ({
 
     return (	
         <div className={"commander"} onKeyDown={onKeyDown}>
-            <SplitterGrid 
-                first={(
-                    <FolderTable 
-                        theme={theme} 
-                        focused={focusedLeft} 
-                        setFocused={setFocusedLeft} 
-                        columns={columnsLeft} 
-                        onColumnsChanged={onColsChangedLeft} 
-                        onSort={(col, isDesc, isSub) => onSort(1, col, isDesc, isSub)}
-                        items={itemsLeft}
-                        onItemsChanged={setItemsLeft}
-                        itemRenderer={getItemRenderer (1)}
-                        currentIndex={currentIndexLeft}
-                        onCurrentIndexChanged={setCurrentIndexLeft}
-                        path={pathLeft}
-                        onPathChanged={onPathChangedLeft}
-                        onEnter={items => onEnter(1, items)} /> 
+            <SplitterGrid isVertical={true} isSecondInvisible={!isViewerVisible}
+                first = {(
+                    <SplitterGrid 
+                        first={(
+                            <FolderTable 
+                                theme={theme} 
+                                focused={focusedLeft} 
+                                setFocused={setFocusedLeft} 
+                                columns={columnsLeft} 
+                                onColumnsChanged={onColsChangedLeft} 
+                                onSort={(col, isDesc, isSub) => onSort(1, col, isDesc, isSub)}
+                                items={itemsLeft}
+                                onItemsChanged={setItemsLeft}
+                                itemRenderer={getItemRenderer (1)}
+                                currentIndex={currentIndexLeft}
+                                onCurrentIndexChanged={setCurrentIndexLeft}
+                                path={pathLeft}
+                                onPathChanged={onPathChangedLeft}
+                                onEnter={items => onEnter(1, items)} /> 
+                        )} 
+                        second={(
+                            <FolderTable 
+                                theme={theme} 
+                                focused={focusedRight} 
+                                setFocused={setFocusedRight} 
+                                columns={columnsRight} 
+                                onColumnsChanged={onColsChangedRight} 
+                                onSort={(col, isDesc, isSub) => onSort(2, col, isDesc, isSub)}
+                                items={itemsRight}
+                                onItemsChanged={setItemsRight}
+                                itemRenderer={getItemRenderer (2)}
+                                currentIndex={currentIndexRight}
+                                onCurrentIndexChanged={setCurrentIndexRight}
+                                path={pathRight}
+                                onPathChanged={onPathChangedRight}
+                                onEnter={items => onEnter(2, items)} /> 
+                        )} 
+                    />
                 )} 
-                second={(
-                    <FolderTable 
-                        theme={theme} 
-                        focused={focusedRight} 
-                        setFocused={setFocusedRight} 
-                        columns={columnsRight} 
-                        onColumnsChanged={onColsChangedRight} 
-                        onSort={(col, isDesc, isSub) => onSort(2, col, isDesc, isSub)}
-                        items={itemsRight}
-                        onItemsChanged={setItemsRight}
-                        itemRenderer={getItemRenderer (2)}
-                        currentIndex={currentIndexRight}
-                        onCurrentIndexChanged={setCurrentIndexRight}
-                        path={pathRight}
-                        onPathChanged={onPathChangedRight}
-                        onEnter={items => onEnter(2, items)} /> 
-                )} 
+                second = {(
+                    <div />
+                )}
             />
         </div>
     )
 }
 
+// TODO F3 viewer: OnGridChanged: resize VirtualTables
 // TODO F3 viewer
 // TODO Status only in app! with item and # items/# of selected items 

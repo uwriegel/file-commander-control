@@ -53,6 +53,10 @@ const App = () => {
     const onShowHiddenChanged = (evt: React.ChangeEvent<HTMLInputElement>) => 
         setShowHidden(evt.target.checked)
 
+    const [isViewerVisible, setIsViewerVisible] = useState(false)
+    const onShowViewerChanged = (evt: React.ChangeEvent<HTMLInputElement>) => 
+        setIsViewerVisible(evt.target.checked)
+                
     return (	
 		<div>
 			<div>
@@ -70,9 +74,11 @@ const App = () => {
 				</select>
                 <input type="checkbox" name="showHidden" id="showHidden" onChange={onShowHiddenChanged} />
                 <label htmlFor="showHidden" >Show hidden</label>
+                <input type="checkbox" name="showViewer" id="showHidden" onChange={onShowViewerChanged} />
+                <label htmlFor="showViewer" >Show Viewer</label>
 			</div>
 			{appChoice == 0 
-				? <CommanderContainer theme={theme} showHidden={showHidden}/> 
+				? <CommanderContainer theme={theme} showHidden={showHidden} isViewerVisible={isViewerVisible} /> 
 				: appChoice == 1 
                     ? <FolderTest theme={theme} />
                     : <CommanderTest theme={theme} />
