@@ -118,7 +118,8 @@ export const CommanderTest = ({theme}: CommanderTestProps) => {
                         onCurrentIndexChanged={setCurrentIndexLeft}
                         path={pathLeft}
                         onPathChanged={onPathChangedLeft}
-                        onEnter={onEnter} /> 
+                        onEnter={onEnter}
+                        heightChanged={0} /> 
                 )} 
                 second={(
                     <FolderTable 
@@ -133,9 +134,10 @@ export const CommanderTest = ({theme}: CommanderTestProps) => {
                         itemRenderer={itemRenderer}
                         currentIndex={currentIndexRight}
                         onCurrentIndexChanged={setCurrentIndexRight}
-                       path={pathRight}
+                        path={pathRight}
                         onPathChanged={onPathChangedRight}
-                        onEnter={onEnter} /> 
+                        onEnter={onEnter}
+                        heightChanged={0} /> 
                 )} 
             />
         </div>

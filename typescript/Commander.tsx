@@ -19,11 +19,17 @@ type CommanderProps = {
     refreshLeft: boolean,
     refreshRight: boolean,
     sort: (items: FolderTableItem[], column: number, isDescending: boolean, isSubItem?: boolean) => FolderTableItem[]
-    isViewerVisible: boolean
+    isViewerVisible: boolean,
 }
 
 export const Commander = ({
-        namespace, theme, getPathInfo, getItems, refreshLeft, refreshRight, sort, isViewerVisible
+        namespace, 
+        theme, 
+        getPathInfo, 
+        getItems, 
+        refreshLeft, refreshRight, 
+        sort, 
+        isViewerVisible
     }: CommanderProps) => {
 // ============================== States =======================================
 
@@ -91,6 +97,8 @@ export const Commander = ({
 
     const onPathChangedLeft = (path: string) =>  onChange(1, path)
     const onPathChangedRight = (path: string) => onChange(2, path)
+
+    const [heightChanged, setHeightChanged] = useState(0)
 
 // ============================== States =======================================
 
@@ -166,6 +174,10 @@ export const Commander = ({
         initialize()
     }, [])
 
+    const heightUpdate = useRef(0)
+    const onViewerPositionChanged = () => setHeightChanged(++heightUpdate.current)
+    useEffect(onViewerPositionChanged, [isViewerVisible])
+
     return (	
         <div className={"commander"} onKeyDown={onKeyDown}>
             <SplitterGrid isVertical={true} isSecondInvisible={!isViewerVisible}
@@ -186,7 +198,8 @@ export const Commander = ({
                                 onCurrentIndexChanged={setCurrentIndexLeft}
                                 path={pathLeft}
                                 onPathChanged={onPathChangedLeft}
-                                onEnter={items => onEnter(1, items)} /> 
+                                onEnter={items => onEnter(1, items)}
+                                heightChanged={heightChanged} /> 
                         )} 
                         second={(
                             <FolderTable 
@@ -203,18 +216,20 @@ export const Commander = ({
                                 onCurrentIndexChanged={setCurrentIndexRight}
                                 path={pathRight}
                                 onPathChanged={onPathChangedRight}
-                                onEnter={items => onEnter(2, items)} /> 
+                                onEnter={items => onEnter(2, items)} 
+                                heightChanged={heightChanged} />  
                         )} 
                     />
                 )} 
                 second = {(
                     <div />
                 )}
+                positionChanged={onViewerPositionChanged}
             />
         </div>
     )
 }
 
-// TODO F3 viewer: OnGridChanged: resize VirtualTables, function which toggles bool state
 // TODO F3 viewer
+// TODO Viewer and GridSplitter: theme dark
 // TODO Status only in app! with item and # items/# of selected items 

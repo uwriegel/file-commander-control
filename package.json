@@ -21,10 +21,10 @@
   "dependencies": {
     "@types/lodash": "^4.14.168",
     "@types/react-transition-group": "^4.4.1",
-    "grid-splitter-react": "^1.2.2",
+    "grid-splitter-react": "^1.2.5",
     "lodash": "^4.17.21",
     "react-transition-group": "^4.4.1",
-    "virtual-table-react": "^7.0.0"
+    "virtual-table-react": "^7.1.1"
   },
   "devDependencies": {
     "@types/react": "^17.0.2",

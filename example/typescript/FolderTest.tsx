@@ -73,7 +73,8 @@ export const FolderTest = ({theme}: FolderTestProps) => {
                 onCurrentIndexChanged={setCurrentIndex}
                 path={path}
                 onPathChanged={onPathChanged}
-                onEnter={onEnter} /> 
+                onEnter={onEnter}
+                heightChanged={0} /> 
         </div>
 	)
 }

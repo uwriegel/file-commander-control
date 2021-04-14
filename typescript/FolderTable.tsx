@@ -36,6 +36,7 @@ export type FolderTableProps = {
     path: string
     onPathChanged: (path: string)=>void,
     onEnter: (items: FolderTableItem[])=>void
+    heightChanged: number
 }
 
 export const FolderTable = ({
@@ -52,7 +53,8 @@ export const FolderTable = ({
     itemRenderer,
     path,
     onPathChanged,
-    onEnter
+    onEnter,
+    heightChanged
 }: FolderTableProps) => {
 
     const [pathText, setPathText] = useState("")
@@ -211,7 +213,8 @@ export const FolderTable = ({
                 theme={theme}
                 focused={focused}
                 onFocused={setFocused}
-                onDoubleClick={onDoubleClick} />
+                onDoubleClick={onDoubleClick}
+                heightChanged={heightChanged} />
             <CSSTransition
                 in={restrictValue.length > 0}
                 timeout={400}
