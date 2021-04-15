@@ -118,7 +118,8 @@ export const FolderTable = ({
         if (evt.which == 45) { // Ins
             const item = displayItems[currentIndex ?? 0]
             item.isSelected = !item.isNotSelectable && !item.isSelected
-            onCurrentIndexChanged((currentIndex ?? 0) + 1)
+            const newIndex = currentIndex >= displayItems.length - 1 ? displayItems.length - 1 : (currentIndex ?? 0) + 1
+            onCurrentIndexChanged(newIndex)
             onItemsChanged([...displayItems])
             return true
         }

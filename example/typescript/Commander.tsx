@@ -67,11 +67,18 @@ const getDateTime = (dateString: string) => {
     return dateFormat.format(date) + " " + timeFormat.format(date)  
 }
 
-export const getItem = (info: Info) => 
-    // info.path != "root"
-    // ?  info.path + '/' + info.item
-    // : info.item
-    "Kommt noch"
+export const getItem = (info: Info) => {
+    if (info.item) {
+        if (info.path != "root") {
+            const fileItem = info.item as FileItem
+            return (info.path != "/" ? info.path + '/' : info.path) + fileItem.name
+        }
+        else
+            return (info.item as DriveItem).mountPoint
+    }
+    else
+        return ""
+}
 
 export const CommanderContainer = ({theme, showHidden, isViewerVisible, info, setInfo}: CommanderProps) => {
 

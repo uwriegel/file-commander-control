@@ -196,7 +196,7 @@ export const Commander = ({
             numberOfItems: 1,
             numberOfSelectedItems: 0
         })
-    }, [itemsLeft, itemsRight, currentIndexLeft, currentIndexRight])
+    }, [itemsLeft, itemsRight, currentIndexLeft, currentIndexRight, focusedLeft, focusedRight])
 
     return (	
         <div className={"commander"} onKeyDown={onKeyDown}>
@@ -250,6 +250,6 @@ export const Commander = ({
     )
 }
 
-// TODO Viewer and GridSplitter: theme dark
 // TODO Status only in app! with item and # items/# of selected items 
+// TODO Viewer and GridSplitter: theme dark
 // TODO viewer: Displaying imgs, movies and pdfs

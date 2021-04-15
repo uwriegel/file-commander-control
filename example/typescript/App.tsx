@@ -87,7 +87,7 @@ const App = () => {
                     ? <FolderTest theme={theme} />
                     : <CommanderTest theme={theme} />
             }
-            <div>{getItem(info)}</div>
+            <div className={"status"}>{getItem(info)}</div>
 		</div>  
 	)
 }

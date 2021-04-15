@@ -61,3 +61,8 @@ body {
 .exif {
 	color: var(--exif);
 }
+.status {
+	color: var(--tablereact-selected-color);
+    background-color: var(--tablereact-selected-background-color);
+    padding: 1px 1px 0px 1px;
+}
