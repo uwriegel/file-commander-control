@@ -253,3 +253,6 @@ export const Commander = ({
 // TODO Status only in app! with item and # items/# of selected items 
 // TODO Viewer and GridSplitter: theme dark
 // TODO viewer: Displaying imgs, movies and pdfs
+// TODO F9 adapt views
+// TODO History
+// TODO save current path
