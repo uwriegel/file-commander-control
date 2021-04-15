@@ -3,7 +3,8 @@ import { FolderTest } from './FolderTest'
 import 'file-commander-control/dist/index.css'
 import 'grid-splitter-react/dist/index.css'
 import { CommanderTest } from './CommanderTest'
-import { CommanderContainer } from './Commander'
+import { CommanderContainer, getItem } from './Commander'
+import { Info } from 'file-commander-control'
 
 const App = () => {
     const [appChoice, setAppChoice] = useState(0)
@@ -56,6 +57,8 @@ const App = () => {
     const [isViewerVisible, setIsViewerVisible] = useState(false)
     const onShowViewerChanged = (evt: React.ChangeEvent<HTMLInputElement>) => 
         setIsViewerVisible(evt.target.checked)
+
+    const [info, setInfo] = useState({path:"", numberOfSelectedItems: 0, numberOfItems: 0} as Info)
                 
     return (	
 		<div>
@@ -78,11 +81,13 @@ const App = () => {
                 <label htmlFor="showViewer" >Show Viewer</label>
 			</div>
 			{appChoice == 0 
-				? <CommanderContainer theme={theme} showHidden={showHidden} isViewerVisible={isViewerVisible} /> 
+				? <CommanderContainer theme={theme} showHidden={showHidden} isViewerVisible={isViewerVisible}
+                    info={info} setInfo={setInfo} /> 
 				: appChoice == 1 
                     ? <FolderTest theme={theme} />
                     : <CommanderTest theme={theme} />
             }
+            <div>{getItem(info)}</div>
 		</div>  
 	)
 }

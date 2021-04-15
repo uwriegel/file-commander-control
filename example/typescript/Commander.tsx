@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from 'react'
-import { Commander, Column, PathInfo, FolderTableItem, TableItem } from 'file-commander-control'
+import { Commander, Column, PathInfo, FolderTableItem, TableItem, Info } from 'file-commander-control'
 import compose from 'lodash/fp/compose'
 import * as Array from './Array'
 
@@ -41,6 +41,8 @@ type CommanderProps = {
     theme: string,
     showHidden: boolean
     isViewerVisible: boolean
+    info: Info
+    setInfo: (info: Info)=>void
 }
 
 const currentExifIds = new Map<number, number>()
@@ -65,7 +67,13 @@ const getDateTime = (dateString: string) => {
     return dateFormat.format(date) + " " + timeFormat.format(date)  
 }
 
-export const CommanderContainer = ({theme, showHidden, isViewerVisible}: CommanderProps) => {
+export const getItem = (info: Info) => 
+    // info.path != "root"
+    // ?  info.path + '/' + info.item
+    // : info.item
+    "Kommt noch"
+
+export const CommanderContainer = ({theme, showHidden, isViewerVisible, info, setInfo}: CommanderProps) => {
 
     const [refreshLeft, doRefreshLeft] = useState(false)
     const [refreshRight, doRefreshRight] = useState(false)
@@ -301,6 +309,7 @@ export const CommanderContainer = ({theme, showHidden, isViewerVisible}: Command
          
     return <Commander namespace={"test-commander"} 
             theme={theme} getPathInfo={getPathInfo} getItems={getItems}
-            refreshLeft={refreshLeft} refreshRight={refreshRight} sort= {sort} isViewerVisible ={isViewerVisible} />
+            refreshLeft={refreshLeft} refreshRight={refreshRight} sort={sort} isViewerVisible ={isViewerVisible} 
+            info={info} setInfo={setInfo}/>
 }
 

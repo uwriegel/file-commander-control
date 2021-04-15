@@ -11,6 +11,13 @@ export type PathInfo = {
     itemRenderer: (item: TableItem)=>JSX.Element[]
 }
 
+export type Info = {
+    path: string,
+    item: FolderTableItem,
+    numberOfSelectedItems: number
+    numberOfItems: number
+}
+
 type CommanderProps = {
     namespace: string,
     theme: string,
@@ -20,6 +27,8 @@ type CommanderProps = {
     refreshRight: boolean,
     sort: (items: FolderTableItem[], column: number, isDescending: boolean, isSubItem?: boolean) => FolderTableItem[]
     isViewerVisible: boolean,
+    info: Info
+    setInfo: (info: Info)=>void
 }
 
 export const Commander = ({
@@ -29,7 +38,8 @@ export const Commander = ({
         getItems, 
         refreshLeft, refreshRight, 
         sort, 
-        isViewerVisible
+        isViewerVisible,
+        setInfo
     }: CommanderProps) => {
 // ============================== States =======================================
 
@@ -164,7 +174,7 @@ export const Commander = ({
     useEffect(() => {
         onChange(2, pathInfoRight.current?.path!)
     }, [refreshRight])
-    
+
     useEffect(() => {
         const initialize = async () => {
             await onChange (1, null)
@@ -177,6 +187,16 @@ export const Commander = ({
     const heightUpdate = useRef(0)
     const onViewerPositionChanged = () => setHeightChanged(++heightUpdate.current)
     useEffect(onViewerPositionChanged, [isViewerVisible])
+
+    useEffect(() => {
+        const folderId = activeFolder.current
+        setInfo({
+            item: items(folderId)[currentIndex(folderId)],
+            path: getPath(folderId),
+            numberOfItems: 1,
+            numberOfSelectedItems: 0
+        })
+    }, [itemsLeft, itemsRight, currentIndexLeft, currentIndexRight])
 
     return (	
         <div className={"commander"} onKeyDown={onKeyDown}>
@@ -230,6 +250,6 @@ export const Commander = ({
     )
 }
 
-// TODO F3 viewer
 // TODO Viewer and GridSplitter: theme dark
 // TODO Status only in app! with item and # items/# of selected items 
+// TODO viewer: Displaying imgs, movies and pdfs
