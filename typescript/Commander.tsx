@@ -194,7 +194,7 @@ export const Commander = ({
             item: items(folderId)[currentIndex(folderId)],
             path: getPath(folderId),
             numberOfItems: items(folderId).length,
-            numberOfSelectedItems: 0
+            numberOfSelectedItems: items(folderId).filter(n => n.isSelected).length
         })
     }, [itemsLeft, itemsRight, currentIndexLeft, currentIndexRight, focusedLeft, focusedRight])
 
@@ -242,7 +242,7 @@ export const Commander = ({
                     />
                 )} 
                 second = {(
-                    <div />
+                    <div className={"viewer"} />
                 )}
                 positionChanged={onViewerPositionChanged}
             />
@@ -250,8 +250,6 @@ export const Commander = ({
     )
 }
 
-// TODO Status # of selected items: lifting state up selectedItems to commander
-// TODO Viewer and GridSplitter: theme dark
 // TODO viewer: Displaying imgs, movies and pdfs
 // TODO F9 adapt views
 // TODO History

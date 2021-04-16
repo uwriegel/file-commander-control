@@ -70,3 +70,6 @@ body {
 .status>:first-child {
 	flex-grow: 1;
 }
+.viewer {
+	background-color: var(--commander-viewer-background-color);
+}

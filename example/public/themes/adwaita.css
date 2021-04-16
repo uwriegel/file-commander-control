@@ -29,9 +29,9 @@
     --tablereact-scrollbar-button-active-background-color: #aaa;
     --tablereact-scrollbar-right-margin: 6px;
 
-    --gridsplitter-grip-color: lightgray;
-    --gridsplitter-grip-hover-color: darkgray;
-    --gridsplitter-grip-active-color: #6b6969;
+    --gridsplitter-grip-color: var(--tablereact-selected-background-color);
+    --gridsplitter-grip-hover-color: lightgray;
+    --gridsplitter-grip-active-color: darkgray;
 
     --exif: darkblue;
 }

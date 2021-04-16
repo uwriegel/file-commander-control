@@ -60,15 +60,17 @@ const App = () => {
 
     const [info, setInfo] = useState({path:"", numberOfSelectedItems: 0, numberOfItems: 0} as Info)
 
-    const getCount = (info: Info) => 
-        info.path != "root"
+    const getCount = (info: Info) => {
+        const count = info.path != "root"
         ? info.numberOfItems - 1
         : info.numberOfItems
+        return count == 1 ? "1 Eintrag" : `${count} Einträge`
+    }
 
     const getCounts = (info: Info) => 
         info.numberOfSelectedItems
-        ? `${info.numberOfSelectedItems}/${getCount(info)}`
-        : getCount(info)
+        ? `${info.numberOfSelectedItems} selektiert/${getCount(info)}`
+        : `${getCount(info)}`
                     
     return (	
 		<div>
