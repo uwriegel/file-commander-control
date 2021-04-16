@@ -65,4 +65,8 @@ body {
 	color: var(--tablereact-selected-color);
     background-color: var(--tablereact-selected-background-color);
     padding: 1px 1px 0px 1px;
+	display: flex;
+}
+.status>:first-child {
+	flex-grow: 1;
 }

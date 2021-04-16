@@ -193,7 +193,7 @@ export const Commander = ({
         setInfo({
             item: items(folderId)[currentIndex(folderId)],
             path: getPath(folderId),
-            numberOfItems: 1,
+            numberOfItems: items(folderId).length,
             numberOfSelectedItems: 0
         })
     }, [itemsLeft, itemsRight, currentIndexLeft, currentIndexRight, focusedLeft, focusedRight])
@@ -250,7 +250,7 @@ export const Commander = ({
     )
 }
 
-// TODO Status only in app! with item and # items/# of selected items 
+// TODO Status # of selected items: lifting state up selectedItems to commander
 // TODO Viewer and GridSplitter: theme dark
 // TODO viewer: Displaying imgs, movies and pdfs
 // TODO F9 adapt views

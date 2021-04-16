@@ -59,7 +59,17 @@ const App = () => {
         setIsViewerVisible(evt.target.checked)
 
     const [info, setInfo] = useState({path:"", numberOfSelectedItems: 0, numberOfItems: 0} as Info)
-                
+
+    const getCount = (info: Info) => 
+        info.path != "root"
+        ? info.numberOfItems - 1
+        : info.numberOfItems
+
+    const getCounts = (info: Info) => 
+        info.numberOfSelectedItems
+        ? `${info.numberOfSelectedItems}/${getCount(info)}`
+        : getCount(info)
+                    
     return (	
 		<div>
 			<div>
@@ -87,7 +97,10 @@ const App = () => {
                     ? <FolderTest theme={theme} />
                     : <CommanderTest theme={theme} />
             }
-            <div className={"status"}>{getItem(info)}</div>
+            <div className={"status"}>
+                <div>{getItem(info)}</div>
+                <div>{getCounts(info)}</div>
+            </div>
 		</div>  
 	)
 }
